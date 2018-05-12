@@ -7,13 +7,13 @@ module Main exposing (main)
 
 import AnimationFrame
 import Html exposing (Html)
-import Html.Attributes exposing (width, height, style)
+import Html.Attributes exposing (height, style, width)
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector2 as Vec2 exposing (Vec2, vec2)
 import Math.Vector3 as Vec3 exposing (Vec3, vec3)
 import Task
 import Time exposing (Time)
-import WebGL exposing (Mesh, Shader, Entity)
+import WebGL exposing (Entity, Mesh, Shader)
 import WebGL.Settings.Blend as Blend
 import WebGL.Settings.DepthTest as DepthTest
 import WebGL.Settings.StencilTest as StencilTest
@@ -53,7 +53,7 @@ main =
     Html.program
         { init = init
         , view = view
-        , subscriptions = (\model -> AnimationFrame.diffs Animate)
+        , subscriptions = \model -> AnimationFrame.diffs Animate
         , update = update
         }
 
@@ -191,7 +191,7 @@ rotatedFace ( angleXZ, angleYZ ) =
         transformTriangle ( a, b, c ) =
             ( transform a, transform b, transform c )
     in
-        List.map transformTriangle square
+    List.map transformTriangle square
 
 
 square : List ( Vertex, Vertex, Vertex )
@@ -209,9 +209,9 @@ square =
         bottomRight =
             { position = vec3 1 -1 0, coord = vec2 1 0 }
     in
-        [ ( topLeft, topRight, bottomLeft )
-        , ( bottomLeft, topRight, bottomRight )
-        ]
+    [ ( topLeft, topRight, bottomLeft )
+    , ( bottomLeft, topRight, bottomRight )
+    ]
 
 
 floorMesh : Mesh { position : Vec3 }
@@ -229,10 +229,10 @@ floorMesh =
         bottomRight =
             { position = vec3 2 0 2 }
     in
-        WebGL.triangles
-            [ ( topLeft, topRight, bottomLeft )
-            , ( bottomLeft, topRight, bottomRight )
-            ]
+    WebGL.triangles
+        [ ( topLeft, topRight, bottomLeft )
+        , ( bottomLeft, topRight, bottomRight )
+        ]
 
 
 

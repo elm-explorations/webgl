@@ -9,9 +9,9 @@ module Main exposing (main)
 -}
 
 import Html exposing (Html)
-import Html.Attributes exposing (width, height, style)
+import Html.Attributes exposing (height, style, width)
 import Math.Vector3 as Vec3 exposing (Vec3, vec3)
-import WebGL exposing (Shader, Mesh)
+import WebGL exposing (Mesh, Shader)
 import WebGL.Settings exposing (Setting)
 import WebGL.Settings.StencilTest as StencilTest
 
@@ -46,10 +46,11 @@ that are marked with 1's in the stencil buffer.
 `StencilTest.testSeparate` takes two options, one for front-, and another for
 back-facing triangles:
 
-* The front-facing stencil test always passes, and replaces the stencil buffer
-  with 1.
-* The back-facing stencil test only passes when the value in the stencil buffer
-  is equal to 1. It does not modify the stencil buffer.
+  - The front-facing stencil test always passes, and replaces the stencil buffer
+    with 1.
+  - The back-facing stencil test only passes when the value in the stencil buffer
+    is equal to 1. It does not modify the stencil buffer.
+
 -}
 stencilTest : Setting
 stencilTest =
@@ -97,10 +98,10 @@ redAndGreenTriangles =
             , Vertex (vec3 1 -0.5 0) (vec3 0 1 0)
             )
     in
-        WebGL.triangles
-            [ redTriangle
-            , greenTriangle
-            ]
+    WebGL.triangles
+        [ redTriangle
+        , greenTriangle
+        ]
 
 
 greenOutline : Mesh Vertex

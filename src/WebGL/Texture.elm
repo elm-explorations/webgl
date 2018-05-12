@@ -1,51 +1,63 @@
 module WebGL.Texture
     exposing
-        ( Texture
+        ( Bigger
         , Error(..)
+        , Options
+        , Resize
+        , Smaller
+        , Texture
+        , Wrap
+        , clampToEdge
+        , defaultOptions
+        , linear
+        , linearMipmapLinear
+        , linearMipmapNearest
         , load
         , loadWith
-        , Options
-        , defaultOptions
-        , nonPowerOfTwoOptions
-        , Resize
-        , Bigger
-        , Smaller
-        , linear
-        , nearest
-        , nearestMipmapNearest
-        , linearMipmapNearest
-        , nearestMipmapLinear
-        , linearMipmapLinear
-        , Wrap
-        , repeat
-        , clampToEdge
         , mirroredRepeat
+        , nearest
+        , nearestMipmapLinear
+        , nearestMipmapNearest
+        , nonPowerOfTwoOptions
+        , repeat
         , size
         )
 
 {-|
+
+
 # Texture
+
 @docs Texture, load, Error, size
 
+
 # Custom Loading
+
 @docs loadWith, Options, defaultOptions
 
+
 ## Resizing
-@docs Resize, linear, nearest,
-  nearestMipmapLinear, nearestMipmapNearest,
-  linearMipmapNearest, linearMipmapLinear,
-  Bigger, Smaller
+
+@docs Resize, linear, nearest
+@docs nearestMipmapLinear, nearestMipmapNearest
+@docs linearMipmapNearest, linearMipmapLinear
+@docs Bigger, Smaller
+
 
 ## Wrapping
+
 @docs Wrap, repeat, clampToEdge, mirroredRepeat
 
+
 # Things You Shouldn’t Do
+
 @docs nonPowerOfTwoOptions
+
 -}
 
+import Native.Texture
 import Task exposing (Task)
 import WebGL
-import Native.Texture
 
 
 {-| Textures can be passed in `uniforms`, and used in the fragment shader.
@@ -77,15 +89,16 @@ load =
 
 {-| Loading a texture can result in two kinds of errors:
 
-* `LoadError` means the image did not load for some reason. Maybe
-  it was a network problem, or maybe it was a bad file format.
+  - `LoadError` means the image did not load for some reason. Maybe
+    it was a network problem, or maybe it was a bad file format.
 
-* `SizeError` means you are trying to load a weird shaped image.
-  For most operations you want a rectangle where the width is a power
-  of two and the height is a power of two. This is more efficient on
-  the GPU and it makes mipmapping possible. You can use
-  [`nonPowerOfTwoOptions`](#nonPowerOfTwoOptions) to get things working
-  now, but it is way better to create power-of-two assets!
+  - `SizeError` means you are trying to load a weird shaped image.
+    For most operations you want a rectangle where the width is a power
+    of two and the height is a power of two. This is more efficient on
+    the GPU and it makes mipmapping possible. You can use
+    [`nonPowerOfTwoOptions`](#nonPowerOfTwoOptions) to get things working
+    now, but it is way better to create power-of-two assets!
+
 -}
 type Error
     = LoadError
@@ -100,20 +113,21 @@ loadWith { magnify, minify, horizontalWrap, verticalWrap, flipY } url =
         expand (Resize mag) (Resize min) (Wrap hor) (Wrap vert) =
             Native.Texture.load mag min hor vert flipY url
     in
-        expand magnify minify horizontalWrap verticalWrap
+    expand magnify minify horizontalWrap verticalWrap
 
 
 {-| `Options` describe how to:
 
-* `magnify` - how to [`Resize`](#Resize) into a bigger texture
-* `minify` - how to [`Resize`](#Resize) into a smaller texture
-* `horizontalWrap` - how to [`Wrap`](#Wrap) the texture horizontally if the width is not a power of two
-* `verticalWrap` - how to [`Wrap`](#Wrap) the texture vertically if the height is not a power of two
-* `flipY` - flip the Y axis of the texture so it has the same direction
-  as the clip-space, i.e. pointing up.
+  - `magnify` - how to [`Resize`](#Resize) into a bigger texture
+  - `minify` - how to [`Resize`](#Resize) into a smaller texture
+  - `horizontalWrap` - how to [`Wrap`](#Wrap) the texture horizontally if the width is not a power of two
+  - `verticalWrap` - how to [`Wrap`](#Wrap) the texture vertically if the height is not a power of two
+  - `flipY` - flip the Y axis of the texture so it has the same direction
+    as the clip-space, i.e. pointing up.
 
 You can read more about these parameters in the
 [specification](https://www.khronos.org/opengles/sdk/docs/man/xhtml/glTexParameter.xml).
+
 -}
 type alias Options =
     { magnify : Resize Bigger
@@ -132,6 +146,7 @@ type alias Options =
     , verticalWrap = repeat
     , flipY = True
     }
+
 -}
 defaultOptions : Options
 defaultOptions =
@@ -153,6 +168,7 @@ options:
     , verticalWrap = clampToEdge
     , flipY = True
     }
+
 -}
 nonPowerOfTwoOptions : Options
 nonPowerOfTwoOptions =
@@ -198,6 +214,7 @@ A mipmap is an ordered set of arrays representing the same image at
 progressively lower resolutions.
 
 This is the default value of the minify filter.
+
 -}
 nearestMipmapNearest : Resize Smaller
 nearestMipmapNearest =

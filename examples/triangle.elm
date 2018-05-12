@@ -6,9 +6,9 @@ module Main exposing (main)
 
 import AnimationFrame
 import Html exposing (Html)
-import Html.Attributes exposing (width, height, style)
+import Html.Attributes exposing (height, style, width)
 import Math.Matrix4 as Mat4 exposing (Mat4)
-import Math.Vector3 as Vec3 exposing (vec3, Vec3)
+import Math.Vector3 as Vec3 exposing (Vec3, vec3)
 import Time exposing (Time)
 import WebGL exposing (Mesh, Shader)
 
@@ -18,8 +18,8 @@ main =
     Html.program
         { init = ( 0, Cmd.none )
         , view = view
-        , subscriptions = (\model -> AnimationFrame.diffs Basics.identity)
-        , update = (\elapsed currentTime -> ( elapsed + currentTime, Cmd.none ))
+        , subscriptions = \model -> AnimationFrame.diffs Basics.identity
+        , update = \elapsed currentTime -> ( elapsed + currentTime, Cmd.none )
         }
 
 

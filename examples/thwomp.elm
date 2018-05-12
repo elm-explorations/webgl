@@ -6,14 +6,14 @@ module Main exposing (main)
 -}
 
 import Html exposing (Html, text)
-import Html.Attributes exposing (width, height, style)
+import Html.Attributes exposing (height, style, width)
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector2 as Vec2 exposing (Vec2, vec2)
 import Math.Vector3 as Vec3 exposing (Vec3, vec3)
 import Mouse
 import Task exposing (Task)
-import WebGL exposing (Mesh, Shader, Entity)
-import WebGL.Texture as Texture exposing (Texture, defaultOptions, Error)
+import WebGL exposing (Entity, Mesh, Shader)
+import WebGL.Texture as Texture exposing (Error, Texture, defaultOptions)
 import Window
 
 
@@ -150,7 +150,7 @@ rotatedSquare ( angleXZ, angleYZ ) =
         transformTriangle ( a, b, c ) =
             ( transform a, transform b, transform c )
     in
-        List.map transformTriangle square
+    List.map transformTriangle square
 
 
 square : List ( Vertex, Vertex, Vertex )
@@ -168,9 +168,9 @@ square =
         bottomRight =
             Vertex (vec3 1 -1 1) (vec2 1 0)
     in
-        [ ( topLeft, topRight, bottomLeft )
-        , ( bottomLeft, topRight, bottomRight )
-        ]
+    [ ( topLeft, topRight, bottomLeft )
+    , ( bottomLeft, topRight, bottomRight )
+    ]
 
 
 
@@ -218,9 +218,9 @@ perspective width height x y =
                 |> Vec3.normalize
                 |> Vec3.scale 6
     in
-        Mat4.mul
-            (Mat4.makePerspective 45 (width / height) 0.01 100)
-            (Mat4.makeLookAt eye (vec3 0 0 0) Vec3.j)
+    Mat4.mul
+        (Mat4.makePerspective 45 (width / height) 0.01 100)
+        (Mat4.makeLookAt eye (vec3 0 0 0) Vec3.j)
 
 
 

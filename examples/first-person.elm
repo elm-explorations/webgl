@@ -5,16 +5,16 @@ module Main exposing (main)
 -}
 
 import AnimationFrame
-import Html exposing (Html, text, div)
-import Html.Attributes exposing (width, height, style)
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (height, style, width)
 import Keyboard
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector2 as Vec2 exposing (Vec2, vec2)
 import Math.Vector3 as Vec3 exposing (Vec3, vec3)
 import Task exposing (Task)
 import Time exposing (Time)
-import WebGL exposing (Mesh, Shader, Entity)
-import WebGL.Texture as Texture exposing (Texture, Error)
+import WebGL exposing (Entity, Mesh, Shader)
+import WebGL.Texture as Texture exposing (Error, Texture)
 import Window
 
 
@@ -139,24 +139,28 @@ move { left, right, up, down, space } person =
         direction a b =
             if a == b then
                 0
+
             else if a then
                 1
+
             else
                 -1
 
         vy =
             if space then
                 2
+
             else
                 Vec3.getY person.velocity
     in
-        if Vec3.getY person.position <= eyeLevel then
-            { person
-                | velocity =
-                    vec3 (direction left right) vy (direction up down)
-            }
-        else
-            person
+    if Vec3.getY person.position <= eyeLevel then
+        { person
+            | velocity =
+                vec3 (direction left right) vy (direction up down)
+        }
+
+    else
+        person
 
 
 physics : Float -> Person -> Person
@@ -165,13 +169,14 @@ physics dt person =
         position =
             Vec3.add person.position (Vec3.scale dt person.velocity)
     in
-        { person
-            | position =
-                if Vec3.getY position < eyeLevel then
-                    Vec3.setY eyeLevel position
-                else
-                    position
-        }
+    { person
+        | position =
+            if Vec3.getY position < eyeLevel then
+                Vec3.setY eyeLevel position
+
+            else
+                position
+    }
 
 
 gravity : Float -> Person -> Person
@@ -183,6 +188,7 @@ gravity dt person =
                     (Vec3.getY person.velocity - 2 * dt)
                     person.velocity
         }
+
     else
         person
 
@@ -240,14 +246,14 @@ scene { width, height } person texture =
                 (Mat4.makePerspective 45 (toFloat width / toFloat height) 0.01 100)
                 (Mat4.makeLookAt person.position (Vec3.add person.position Vec3.k) Vec3.j)
     in
-        [ WebGL.entity
-            vertexShader
-            fragmentShader
-            crate
-            { texture = texture
-            , perspective = perspective
-            }
-        ]
+    [ WebGL.entity
+        vertexShader
+        fragmentShader
+        crate
+        { texture = texture
+        , perspective = perspective
+        }
+    ]
 
 
 
@@ -284,7 +290,7 @@ rotatedSquare ( angleXZ, angleYZ ) =
         transformTriangle ( a, b, c ) =
             ( transform a, transform b, transform c )
     in
-        List.map transformTriangle square
+    List.map transformTriangle square
 
 
 square : List ( Vertex, Vertex, Vertex )
@@ -302,9 +308,9 @@ square =
         bottomRight =
             Vertex (vec3 1 -1 1) (vec2 1 0)
     in
-        [ ( topLeft, topRight, bottomLeft )
-        , ( bottomLeft, topRight, bottomRight )
-        ]
+    [ ( topLeft, topRight, bottomLeft )
+    , ( bottomLeft, topRight, bottomRight )
+    ]
 
 
 

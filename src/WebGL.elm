@@ -1,27 +1,27 @@
 module WebGL
     exposing
-        ( Texture
-        , Shader
-        , Entity
+        ( Entity
         , Mesh
-        , triangles
-        , indexedTriangles
-        , lines
-        , lineStrip
-        , lineLoop
-        , points
-        , triangleFan
-        , triangleStrip
-        , entity
-        , entityWith
-        , toHtml
-        , toHtmlWith
         , Option
+        , Shader
+        , Texture
         , alpha
-        , depth
-        , stencil
         , antialias
         , clearColor
+        , depth
+        , entity
+        , entityWith
+        , indexedTriangles
+        , lineLoop
+        , lineStrip
+        , lines
+        , points
+        , stencil
+        , toHtml
+        , toHtmlWith
+        , triangleFan
+        , triangleStrip
+        , triangles
         , unsafeShader
         )
 
@@ -30,34 +30,49 @@ module WebGL
 and look at [some examples](https://github.com/elm-community/webgl/tree/master/examples)
 before trying to do too much with just the documentation provided here.
 
+
 # Mesh
+
 @docs Mesh, triangles
 
+
 # Shaders
+
 @docs Shader, Texture
 
+
 # Entities
+
 @docs Entity, entity
 
+
 # WebGL Html
+
 @docs toHtml
 
+
 # Advanced Usage
-@docs entityWith, toHtmlWith, Option, alpha, depth, stencil, antialias,
-  clearColor
+
+@docs entityWith, toHtmlWith, Option, alpha, depth, stencil, antialias
+@docs clearColor
+
 
 # Meshes
-@docs indexedTriangles, lines, lineStrip, lineLoop, points, triangleFan,
-  triangleStrip
+
+@docs indexedTriangles, lines, lineStrip, lineLoop, points, triangleFan
+@docs triangleStrip
+
 
 # Unsafe Shader Creation (for library writers)
+
 @docs unsafeShader
+
 -}
 
-import Html exposing (Html, Attribute)
+import Html exposing (Attribute, Html)
+import Native.WebGL
 import WebGL.Settings as Settings exposing (Setting)
 import WebGL.Settings.DepthTest as DepthTest
-import Native.WebGL
 
 
 {-| Mesh forms geometry from the specified vertices. Each vertex contains a
@@ -74,6 +89,7 @@ and `Vec2`, `Vec3`, `Vec4`, `Mat4` from the
 package.
 
 Do not generate meshes in `view`, [read more about this here](http://package.elm-lang.org/packages/elm-community/webgl/latest#making-the-most-of-the-gpu).
+
 -}
 type Mesh attributes
     = Triangles (List ( attributes, attributes, attributes ))
@@ -91,6 +107,7 @@ to form any shape.
 
 So when you create `triangles` you are really providing three sets of attributes
 that describe the corners of each triangle.
+
 -}
 triangles : List ( attributes, attributes, attributes ) -> Mesh attributes
 triangles =
@@ -120,19 +137,14 @@ This helps to avoid duplicated vertices whenever two triangles share an
 edge. For example, if you want to define a rectangle using
 [`triangles`](#triangles), `v0` and `v2` will have to be duplicated:
 
-    -- v2 +---+ v1
-    --    |\  |
-    --    | \ |
-    --    |  \|
-    -- v3 +---+ v0
-
     rectangle =
-        triangles [(v0, v1, v2), (v2, v3, v0)]
+        triangles [ ( v0, v1, v2 ), ( v2, v3, v0 ) ]
 
 This will use two vertices less:
 
     rectangle =
-        indexedTriangles [v0, v1, v2, v3] [(0, 1, 2), (2, 3, 0)]
+        indexedTriangles [ v0, v1, v2, v3 ] [ ( 0, 1, 2 ), ( 2, 3, 0 ) ]
+
 -}
 indexedTriangles : List attributes -> List ( Int, Int, Int ) -> Mesh attributes
 indexedTriangles =
@@ -176,16 +188,17 @@ shaders [here](https://github.com/elm-community/webgl/blob/master/README.md).
 Normally you specify a shader with a `[glsl| |]` block. Elm compiler will parse
 the shader code block and derive the type signature for your shader.
 
-* `attributes` define vertices in the [mesh](#Mesh);
-* `uniforms` allow you to pass scene parameters like
-  transformation matrix, texture, screen size, etc.;
-* `varyings` define the output from the vertex shader.
+  - `attributes` define vertices in the [mesh](#Mesh);
+  - `uniforms` allow you to pass scene parameters like
+    transformation matrix, texture, screen size, etc.;
+  - `varyings` define the output from the vertex shader.
 
 `attributes`, `uniforms` and `varyings` are records with the fields of the
 following types: `Int`, `Float`, [`Texture`](#Texture) and `Vec2`, `Vec3`, `Vec4`,
 `Mat4` from the
 [linear-algebra](http://package.elm-lang.org/packages/elm-community/linear-algebra/latest)
 package.
+
 -}
 type Shader attributes uniforms varyings
     = Shader
@@ -250,6 +263,7 @@ then use [`entityWith`](#entityWith).
 
     entity =
         entityWith [ DepthTest.default ]
+
 -}
 entity :
     Shader attributes uniforms varyings
@@ -280,7 +294,7 @@ entityWith =
 `width` and `height` html attributes resize the drawing buffer, while
 the corresponding css properties scale the canvas element.
 
-To prevent blurriness on retina screens, you may want the drawing buffer 
+To prevent blurriness on retina screens, you may want the drawing buffer
 to be twice the size of the canvas element.
 
 To remove an extra whitespace around the canvas, set `display: block`.
@@ -290,6 +304,7 @@ are enabled. Use [`toHtmlWith`](#toHtmlWith) for custom options.
 
     toHtml =
         toHtmlWith [ alpha True, antialias, depth 1 ]
+
 -}
 toHtml : List (Attribute msg) -> List Entity -> Html msg
 toHtml =
@@ -300,6 +315,7 @@ toHtml =
 
 Due to browser limitations, options will be applied only once,
 when the canvas is created for the first time.
+
 -}
 toHtmlWith : List Option -> List (Attribute msg) -> List Entity -> Html msg
 toHtmlWith options attributes entities =

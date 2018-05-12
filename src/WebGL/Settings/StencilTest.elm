@@ -1,44 +1,53 @@
 module WebGL.Settings.StencilTest
     exposing
-        ( test
-        , testSeparate
+        ( Operation
         , Test
         , always
-        , equal
-        , never
-        , less
-        , greater
-        , lessOrEqual
-        , greaterOrEqual
-        , notEqual
-        , Operation
-        , replace
-        , keep
-        , zero
-        , increment
         , decrement
-        , invert
-        , incrementWrap
         , decrementWrap
+        , equal
+        , greater
+        , greaterOrEqual
+        , increment
+        , incrementWrap
+        , invert
+        , keep
+        , less
+        , lessOrEqual
+        , never
+        , notEqual
+        , replace
+        , test
+        , testSeparate
+        , zero
         )
 
 {-| You can read more about stencil-testing in the
 [OpenGL wiki](https://www.khronos.org/opengl/wiki/Stencil_Test)
 or [OpenGL docs](https://www.opengl.org/sdk/docs/man2/xhtml/glStencilFunc.xml).
 
+
 # Stencil Test
+
 @docs test
 
+
 ## Tests
-@docs Test, always, equal, never, less, greater, notEqual,
-  lessOrEqual, greaterOrEqual
+
+@docs Test, always, equal, never, less, greater, notEqual
+@docs lessOrEqual, greaterOrEqual
+
 
 ## Operations
-@docs Operation, replace, keep, zero, increment, decrement, invert,
-  incrementWrap, decrementWrap
+
+@docs Operation, replace, keep, zero, increment, decrement, invert
+@docs incrementWrap, decrementWrap
+
 
 # Separate Test
+
 @docs testSeparate
+
 -}
 
 import WebGL.Settings exposing (Setting)
@@ -53,12 +62,12 @@ Stencil test decides if the pixel should be drawn on the screen.
 Depending on the results, it performs one of the following
 [operations](#Operation) on the stencil buffer:
 
-* `fail`—the operation to use when the stencil test fails;
-* `zfail`—the operation to use when the stencil test passes, but the depth
-  test fails;
-* `zpass`—the operation to use when both the stencil test and the depth test
-  pass, or when the stencil test passes and there is no depth buffer or depth
-  testing is disabled.
+  - `fail`—the operation to use when the stencil test fails;
+  - `zfail`—the operation to use when the stencil test passes, but the depth
+    test fails;
+  - `zpass`—the operation to use when both the stencil test and the depth test
+    pass, or when the stencil test passes and there is no depth buffer or depth
+    testing is disabled.
 
 For example, draw the mirror `Entity` on the screen and fill the stencil buffer
 with all 1's:
@@ -87,6 +96,7 @@ Crop the reflection `Entity` using the values from the stencil buffer:
 
 You can see the complete example
 [here](https://github.com/elm-community/webgl/blob/master/examples/crate.elm).
+
 -}
 test :
     { ref : Int
@@ -117,6 +127,7 @@ the pixel will be drawn.
     notEqual       -- ref & mask != stencil & mask
     lessOrEqual    -- ref & mask <= stencil & mask
     greaterOrEqual -- ref & mask >= stencil & mask
+
 -}
 type Test
     = Test Int
@@ -257,6 +268,6 @@ testSeparate { ref, mask, writeMask } options1 options2 =
                 >> expandOp zfail
                 >> expandOp zpass
     in
-        I.StencilTest ref mask writeMask
-            |> expand options1
-            |> expand options2
+    I.StencilTest ref mask writeMask
+        |> expand options1
+        |> expand options2
