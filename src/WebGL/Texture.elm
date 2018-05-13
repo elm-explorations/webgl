@@ -55,7 +55,7 @@ module WebGL.Texture
 
 -}
 
-import Native.Texture
+import Elm.Kernel.Texture
 import Task exposing (Task)
 import WebGL
 
@@ -111,7 +111,7 @@ loadWith : Options -> String -> Task Error Texture
 loadWith { magnify, minify, horizontalWrap, verticalWrap, flipY } url =
     let
         expand (Resize mag) (Resize min) (Wrap hor) (Wrap vert) =
-            Native.Texture.load mag min hor vert flipY url
+            Elm.Kernel.Texture.load mag min hor vert flipY url
     in
     expand magnify minify horizontalWrap verticalWrap
 
@@ -304,4 +304,4 @@ or other times you may want to use only a potion of a texture image.
 -}
 size : Texture -> ( Int, Int )
 size =
-    Native.Texture.size
+    Elm.Kernel.Texture.size

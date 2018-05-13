@@ -69,8 +69,8 @@ before trying to do too much with just the documentation provided here.
 
 -}
 
+import Elm.Kernel.WebGL
 import Html exposing (Attribute, Html)
-import Native.WebGL
 import WebGL.Settings as Settings exposing (Setting)
 import WebGL.Settings.DepthTest as DepthTest
 
@@ -92,14 +92,17 @@ Do not generate meshes in `view`, [read more about this here](http://package.elm
 
 -}
 type Mesh attributes
-    = Triangles (List ( attributes, attributes, attributes ))
-    | Lines (List ( attributes, attributes ))
-    | LineStrip (List attributes)
-    | LineLoop (List attributes)
-    | Points (List attributes)
-    | TriangleFan (List attributes)
-    | TriangleStrip (List attributes)
-    | IndexedTriangles (List attributes) (List ( Int, Int, Int ))
+    = Mesh1 RenderInfo (List attributes)
+    | Mesh2 RenderInfo (List ( attributes, attributes ))
+    | Mesh3 RenderInfo (List ( attributes, attributes, attributes ))
+    | MeshIndexed3 RenderInfo (List attributes) (List ( Int, Int, Int ))
+
+
+type alias RenderInfo =
+    { mode : Int
+    , elemSize : Int
+    , indexSize : Int
+    }
 
 
 {-| Triangles are the basic building blocks of a mesh. You can put them together
@@ -111,7 +114,7 @@ that describe the corners of each triangle.
 -}
 triangles : List ( attributes, attributes, attributes ) -> Mesh attributes
 triangles =
-    Triangles
+    Mesh3 { mode = 0x04, elemSize = 3, indexSize = 0 }
 
 
 {-| Creates a strip of triangles where each additional vertex creates an
@@ -119,7 +122,7 @@ additional triangle once the first three vertices have been drawn.
 -}
 triangleStrip : List attributes -> Mesh attributes
 triangleStrip =
-    TriangleStrip
+    Mesh1 { mode = 0x05, elemSize = 1, indexSize = 0 }
 
 
 {-| Similar to [`triangleStrip`](#triangleStrip), but creates a fan shaped
@@ -127,7 +130,7 @@ output.
 -}
 triangleFan : List attributes -> Mesh attributes
 triangleFan =
-    TriangleFan
+    Mesh1 { mode = 0x06, elemSize = 1, indexSize = 0 }
 
 
 {-| Create triangles from vertices and indices, grouped in sets of three to
@@ -148,21 +151,21 @@ This will use two vertices less:
 -}
 indexedTriangles : List attributes -> List ( Int, Int, Int ) -> Mesh attributes
 indexedTriangles =
-    IndexedTriangles
+    MeshIndexed3 { mode = 0x04, elemSize = 1, indexSize = 3 }
 
 
 {-| Connects each pair of vertices with a line.
 -}
 lines : List ( attributes, attributes ) -> Mesh attributes
 lines =
-    Lines
+    Mesh2 { mode = 0x01, elemSize = 2, indexSize = 0 }
 
 
 {-| Connects each two subsequent vertices with a line.
 -}
 lineStrip : List attributes -> Mesh attributes
 lineStrip =
-    LineStrip
+    Mesh1 { mode = 0x03, elemSize = 1, indexSize = 0 }
 
 
 {-| Similar to [`lineStrip`](#lineStrip), but connects the last vertex back to
@@ -170,14 +173,14 @@ the first.
 -}
 lineLoop : List attributes -> Mesh attributes
 lineLoop =
-    LineLoop
+    Mesh1 { mode = 0x02, elemSize = 1, indexSize = 0 }
 
 
 {-| Draws a single dot per vertex.
 -}
 points : List attributes -> Mesh attributes
 points =
-    Points
+    Mesh1 { mode = 0x00, elemSize = 1, indexSize = 0 }
 
 
 {-| Shaders are programs for running many computations on the GPU in parallel.
@@ -209,7 +212,7 @@ for library writers, who want to create shader combinators.
 -}
 unsafeShader : String -> Shader attributes uniforms varyings
 unsafeShader =
-    Native.WebGL.unsafeCoerceGLSL
+    Elm.Kernel.WebGL.unsafeCoerceGLSL
 
 
 {-| Use `Texture` to pass the `sampler2D` uniform value to the shader. Find
@@ -286,7 +289,7 @@ entityWith :
     -> uniforms
     -> Entity
 entityWith =
-    Native.WebGL.entity
+    Elm.Kernel.WebGL.entity
 
 
 {-| Render a WebGL scene with the given html attributes, and entities.
@@ -319,7 +322,7 @@ when the canvas is created for the first time.
 -}
 toHtmlWith : List Option -> List (Attribute msg) -> List Entity -> Html msg
 toHtmlWith options attributes entities =
-    Native.WebGL.toHtml options attributes entities
+    Elm.Kernel.WebGL.toHtml options attributes entities
 
 
 {-| Provides a way to enable features and change the scene behavior
