@@ -134,10 +134,16 @@ triangleFan =
 
 
 {-| Create triangles from vertices and indices, grouped in sets of three to
-define each triangle by refering the vertices.
+define each triangle by refering the vertices. This helps to avoid duplicated vertices whenever two triangles share an
+edge.
 
-This helps to avoid duplicated vertices whenever two triangles share an
-edge. For example, if you want to define a rectangle using
+    -- v2 +---+ v1
+    --    |\  |
+    --    | \ |
+    --    |  \|
+    -- v3 +---+ v0
+
+For example, if you want to define a rectangle using
 [`triangles`](#triangles), `v0` and `v2` will have to be duplicated:
 
     rectangle =
