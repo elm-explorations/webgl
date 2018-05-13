@@ -28,7 +28,7 @@ module WebGL.Settings
 
 -}
 
-import WebGL.Settings.Internal as I
+import WebGL.Internal as I
 
 
 {-| Lets you customize how an [`Entity`](WebGL#Entity) is rendered. So if you

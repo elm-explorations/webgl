@@ -71,6 +71,7 @@ before trying to do too much with just the documentation provided here.
 
 import Elm.Kernel.WebGL
 import Html exposing (Attribute, Html)
+import WebGL.Internal as I
 import WebGL.Settings as Settings exposing (Setting)
 import WebGL.Settings.DepthTest as DepthTest
 
@@ -334,12 +335,8 @@ toHtmlWith options attributes entities =
 {-| Provides a way to enable features and change the scene behavior
 in [`toHtmlWith`](#toHtmlWith).
 -}
-type Option
-    = Alpha Bool
-    | Depth Float
-    | Stencil Int
-    | Antialias
-    | ClearColor Float Float Float Float
+type alias Option =
+    I.Option
 
 
 {-| Enable alpha channel in the drawing buffer. If the argument is `True`, then
@@ -348,7 +345,7 @@ premultiplied alpha `(r * a, g * a, b * a, a)`.
 -}
 alpha : Bool -> Option
 alpha =
-    Alpha
+    I.Alpha
 
 
 {-| Enable the depth buffer, and prefill it with given value each time before
@@ -356,7 +353,7 @@ the scene is rendered. The value is clamped between 0 and 1.
 -}
 depth : Float -> Option
 depth =
-    Depth
+    I.Depth
 
 
 {-| Enable the stencil buffer, specifying the index used to fill the
@@ -365,7 +362,7 @@ where m >= 8 is the number of bits in the stencil buffer. The default is 0.
 -}
 stencil : Int -> Option
 stencil =
-    Stencil
+    I.Stencil
 
 
 {-| Enable multisample antialiasing of the drawing buffer, if supported by
@@ -375,7 +372,7 @@ then scaling down with CSS transform).
 -}
 antialias : Option
 antialias =
-    Antialias
+    I.Antialias
 
 
 {-| Set the red, green, blue and alpha channels, that will be used to
@@ -384,4 +381,4 @@ clamped between 0 and 1. The default is all 0's.
 -}
 clearColor : Float -> Float -> Float -> Float -> Option
 clearColor =
-    ClearColor
+    I.ClearColor

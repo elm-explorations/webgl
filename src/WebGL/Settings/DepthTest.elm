@@ -29,8 +29,8 @@ or [OpenGL docs](https://www.opengl.org/sdk/docs/man2/xhtml/glDepthFunc.xml).
 
 -}
 
+import WebGL.Internal as I
 import WebGL.Settings exposing (Setting)
-import WebGL.Settings.Internal as I
 
 
 {-| With every pixel, we have to figure out which color to show.

@@ -40,8 +40,7 @@ var _Texture_load = F6(function (magnify, mininify, horizontalWrap, verticalWrap
       );
       if (isSizeValid) {
         callback(__Scheduler_succeed({
-          // TODO: $ for Texture?
-          $: 'Texture',
+          $: __0_TEXTURE,
           __id: _Texture_guid++,
           __createTexture: createTexture,
           __width: width,

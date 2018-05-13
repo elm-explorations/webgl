@@ -49,8 +49,8 @@ module WebGL.Settings.Blend
 
 -}
 
+import WebGL.Internal as I
 import WebGL.Settings exposing (Setting)
-import WebGL.Settings.Internal as I
 
 
 {-| Add the color of the current `Renderable` (the source color)

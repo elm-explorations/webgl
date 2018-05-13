@@ -50,8 +50,8 @@ or [OpenGL docs](https://www.opengl.org/sdk/docs/man2/xhtml/glStencilFunc.xml).
 
 -}
 
+import WebGL.Internal as I
 import WebGL.Settings exposing (Setting)
-import WebGL.Settings.Internal as I
 
 
 {-| When you need to draw an intercection of two entities, e.g. a reflection in
