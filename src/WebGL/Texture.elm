@@ -57,7 +57,6 @@ module WebGL.Texture
 
 import Elm.Kernel.Texture
 import Task exposing (Task)
-import WebGL
 
 
 {-| Use `Texture` to pass the `sampler2D` uniform value to the shader.
