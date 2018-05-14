@@ -227,7 +227,7 @@ function _WebGL_doBindAttribute(gl, attribute, mesh) {
   // The length of the number of vertices that
   // complete one 'thing' based on the drawing mode.
   // ie, 2 for Lines, 3 for Triangles, etc.
-  var elemSize = mesh.a.elemSize;
+  var elemSize = mesh.a.__$elemSize;
 
   var idxKeys = [];
   for (var i = 0; i < elemSize; i++) {
@@ -291,9 +291,9 @@ function _WebGL_doBindAttribute(gl, attribute, mesh) {
 function _WebGL_doBindSetup(gl, mesh) {
   _WebGL_log('Created index buffer');
   var indexBuffer = gl.createBuffer();
-  var indices = (mesh.a.indexSize === 0)
-    ? _WebGL_makeSequentialBuffer(mesh.a.elemSize * _WebGL_listLength(mesh.b))
-    : _WebGL_makeIndexedBuffer(mesh.c, mesh.a.indexSize);
+  var indices = (mesh.a.__$indexSize === 0)
+    ? _WebGL_makeSequentialBuffer(mesh.a.__$elemSize * _WebGL_listLength(mesh.b))
+    : _WebGL_makeIndexedBuffer(mesh.c, mesh.a.__$indexSize);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
@@ -445,7 +445,7 @@ var _WebGL_drawGL = F2(function (model, domNode) {
       A2(__WI_enableSetting(gl, setting));
     }, entity.__settings);
 
-    gl.drawElements(entity.__mesh.a.mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(entity.__mesh.a.__$mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
 
     _WebGL_listEach(function (setting) {
       A2(__WI_disableSetting(gl, setting));
