@@ -108,11 +108,11 @@ test :
     , writeMask : Int
     }
     -> Setting
-test { ref, mask, test, fail, zfail, zpass, writeMask } =
+test stencilTest =
     testSeparate
-        { ref = ref, mask = mask, writeMask = writeMask }
-        { test = test, fail = fail, zfail = zfail, zpass = zpass }
-        { test = test, fail = fail, zfail = zfail, zpass = zpass }
+        { ref = stencilTest.ref, mask = stencilTest.mask, writeMask = stencilTest.writeMask }
+        { test = stencilTest.test, fail = stencilTest.fail, zfail = stencilTest.zfail, zpass = stencilTest.zpass }
+        { test = stencilTest.test, fail = stencilTest.fail, zfail = stencilTest.zfail, zpass = stencilTest.zpass }
 
 
 {-| The `Test` allows you to define how to compare the reference value
@@ -256,17 +256,17 @@ testSeparate :
     -> Setting
 testSeparate { ref, mask, writeMask } options1 options2 =
     let
-        expandTest (Test test) fn =
-            fn test
+        expandTest (Test expandedTest) fn =
+            fn expandedTest
 
         expandOp (Operation op) fn =
             fn op
 
-        expand { test, fail, zfail, zpass } =
-            expandTest test
-                >> expandOp fail
-                >> expandOp zfail
-                >> expandOp zpass
+        expand options =
+            expandTest options.test
+                >> expandOp options.fail
+                >> expandOp options.zfail
+                >> expandOp options.zpass
     in
     I.StencilTest ref mask writeMask
         |> expand options1
