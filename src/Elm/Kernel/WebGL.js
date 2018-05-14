@@ -532,7 +532,7 @@ function _WebGL_setUniforms(setters, values) {
 
 // eslint-disable-next-line no-unused-vars
 var _WebGL_toHtml = F3(function (options, factList, entities) {
-  return _VirtualDom_custom(
+  return __VirtualDom_custom(
     factList,
     {
       __entities: entities,
@@ -604,7 +604,7 @@ function _WebGL_render(model) {
   }, model.__options);
 
   _WebGL_log('Render canvas');
-  var canvas = _VirtualDom_doc.createElement('canvas');
+  var canvas = __VirtualDom_doc.createElement('canvas');
   var gl = canvas.getContext && (
     canvas.getContext('webgl', options.contextAttributes) ||
     canvas.getContext('experimental-webgl', options.contextAttributes)
@@ -615,7 +615,7 @@ function _WebGL_render(model) {
       sceneSetting(gl);
     });
   } else {
-    canvas = _VirtualDom_doc.createElement('div');
+    canvas = __VirtualDom_doc.createElement('div');
     canvas.innerHTML = '<a href="http://get.webgl.org/">Enable WebGL</a> to see this content!';
   }
 
