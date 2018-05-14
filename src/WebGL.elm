@@ -4,7 +4,6 @@ module WebGL
         , Mesh
         , Option
         , Shader
-        , Texture
         , alpha
         , antialias
         , clearColor
@@ -38,7 +37,7 @@ before trying to do too much with just the documentation provided here.
 
 # Shaders
 
-@docs Shader, Texture
+@docs Shader
 
 
 # Entities
@@ -84,7 +83,7 @@ bunch of attributes, defined as a custom record type, e.g.:
         , color : Vec3
         }
 
-The supported types in attributes are: `Int`, `Float`, `WebGL.Texture`
+The supported types in attributes are: `Int`, `Float`, `Texture`
 and `Vec2`, `Vec3`, `Vec4`, `Mat4` from the
 [linear-algebra](http://package.elm-lang.org/packages/elm-community/linear-algebra/latest)
 package.
@@ -220,13 +219,6 @@ for library writers, who want to create shader combinators.
 unsafeShader : String -> Shader attributes uniforms varyings
 unsafeShader =
     Elm.Kernel.WebGL.unsafeCoerceGLSL
-
-
-{-| Use `Texture` to pass the `sampler2D` uniform value to the shader. Find
-more about textures in [`WebGL.Texture`](WebGL-Texture).
--}
-type Texture
-    = Texture
 
 
 {-| Conceptually, an encapsulation of the instructions to render something.

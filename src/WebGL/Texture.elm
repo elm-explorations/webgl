@@ -60,12 +60,12 @@ import Task exposing (Task)
 import WebGL
 
 
-{-| Textures can be passed in `uniforms`, and used in the fragment shader.
+{-| Use `Texture` to pass the `sampler2D` uniform value to the shader.
 You can create a texture with [`load`](#load) or [`loadWith`](#loadWith)
 and measure its dimensions with [`size`](#size).
 -}
-type alias Texture =
-    WebGL.Texture
+type Texture
+    = Texture
 
 
 {-| Loads a texture from the given url with default options.
