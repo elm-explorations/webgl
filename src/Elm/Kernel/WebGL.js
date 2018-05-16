@@ -442,13 +442,13 @@ var _WebGL_drawGL = F2(function (model, domNode) {
     }
 
     _WebGL_listEach(function (setting) {
-      A2(__WI_enableSetting(gl, setting));
+      A2(__WI_enableSetting, gl, setting);
     }, entity.__settings);
 
     gl.drawElements(entity.__mesh.a.__$mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
 
     _WebGL_listEach(function (setting) {
-      A2(__WI_disableSetting(gl, setting));
+      A2(__WI_disableSetting, gl, setting);
     }, entity.__settings);
 
   }
@@ -637,6 +637,6 @@ function _WebGL_render(model) {
 }
 
 function _WebGL_diff(oldModel, newModel) {
-  newModel.model.__cache = oldModel.model.__cache;
+  newModel.__cache = oldModel.__cache;
   return _WebGL_drawGL(newModel);
 }
