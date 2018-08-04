@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Intersection exposing (main)
 
 {-
    Draws a red and a green triangles, where the green triangle is only
@@ -22,7 +22,7 @@ main =
         [ WebGL.stencil 0 ]
         [ width 400
         , height 400
-        , style [ ( "display", "block" ) ]
+        , style "display" "block"
         ]
         [ WebGL.entityWith
             [ stencilTest ]

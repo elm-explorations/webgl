@@ -1,35 +1,35 @@
-module Main exposing (main)
+module Cube exposing (main)
 
 {-
    Rotating cube with colored sides.
 -}
 
-import AnimationFrame
-import Color exposing (Color)
+import Browser
+import Browser.Events exposing (onAnimationFrameDelta)
 import Html exposing (Html)
 import Html.Attributes exposing (height, style, width)
 import Math.Matrix4 as Mat4 exposing (Mat4)
-import Math.Vector3 as Vec3 exposing (Vec3, vec3)
-import Time exposing (Time)
+import Math.Vector3 as Vec3 exposing (vec3, Vec3)
 import WebGL exposing (Mesh, Shader)
+import Json.Decode exposing (Value)
 
 
-main : Program Never Float Time
+main : Program Value Float Float
 main =
-    Html.program
-        { init = ( 0, Cmd.none )
+    Browser.element
+        { init = \_ -> ( 0, Cmd.none )
         , view = view
-        , subscriptions = \_ -> AnimationFrame.diffs Basics.identity
-        , update = \dt theta -> ( theta + dt / 5000, Cmd.none )
+        , subscriptions = (\_ -> onAnimationFrameDelta Basics.identity)
+        , update = (\dt theta -> ( theta + dt / 5000, Cmd.none ))
         }
 
 
-view : Float -> Html Time
+view : Float -> Html Float
 view theta =
     WebGL.toHtml
         [ width 400
         , height 400
-        , style [ ( "display", "block" ) ]
+        , style "display" "block"
         ]
         [ WebGL.entity
             vertexShader
@@ -96,36 +96,26 @@ cubeMesh =
         lbb =
             vec3 -1 -1 -1
     in
-    [ face Color.green rft rfb rbb rbt
-    , face Color.blue rft rfb lfb lft
-    , face Color.yellow rft lft lbt rbt
-    , face Color.red rfb lfb lbb rbb
-    , face Color.purple lft lfb lbb lbt
-    , face Color.orange rbt rbb lbb lbt
-    ]
-        |> List.concat
-        |> WebGL.triangles
+        [ face (vec3 115 210 22) rft rfb rbb rbt -- green
+        , face (vec3 52 101 164) rft rfb lfb lft -- blue
+        , face (vec3 237 212 0) rft lft lbt rbt -- yellow
+        , face (vec3 204 0 0) rfb lfb lbb rbb -- red
+        , face (vec3 117 80 123) lft lfb lbb lbt -- purple
+        , face (vec3 245 121 0) rbt rbb lbb lbt -- orange
+        ]
+            |> List.concat
+            |> WebGL.triangles
 
 
-face : Color -> Vec3 -> Vec3 -> Vec3 -> Vec3 -> List ( Vertex, Vertex, Vertex )
-face rawColor a b c d =
+face : Vec3 -> Vec3 -> Vec3 -> Vec3 -> Vec3 -> List ( Vertex, Vertex, Vertex )
+face color a b c d =
     let
-        color =
-            let
-                c =
-                    Color.toRgb rawColor
-            in
-            vec3
-                (toFloat c.red / 255)
-                (toFloat c.green / 255)
-                (toFloat c.blue / 255)
-
         vertex position =
-            Vertex color position
+            Vertex (Vec3.scale (1 / 255) color) position
     in
-    [ ( vertex a, vertex b, vertex c )
-    , ( vertex c, vertex d, vertex a )
-    ]
+        [ ( vertex a, vertex b, vertex c )
+        , ( vertex c, vertex d, vertex a )
+        ]
 
 
 

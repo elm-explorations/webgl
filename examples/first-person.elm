@@ -1,27 +1,28 @@
-module Main exposing (main)
+module FirstPerson exposing (main)
 
 {-
    Try adding the ability to crouch or to land on top of the crate.
 -}
 
-import AnimationFrame
-import Html exposing (Html, div, text)
-import Html.Attributes exposing (height, style, width)
-import Keyboard
+import Browser
+import Browser.Events exposing (onAnimationFrameDelta, onKeyDown, onKeyUp, onResize)
+import Browser.Dom exposing (getViewport, Viewport)
+import Html exposing (Html, text, div)
+import Html.Attributes exposing (width, height, style)
+import Html.Events exposing (keyCode)
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector2 as Vec2 exposing (Vec2, vec2)
 import Math.Vector3 as Vec3 exposing (Vec3, vec3)
 import Task exposing (Task)
-import Time exposing (Time)
-import WebGL exposing (Entity, Mesh, Shader)
-import WebGL.Texture as Texture exposing (Error, Texture)
-import Window
+import WebGL exposing (Mesh, Shader, Entity)
+import WebGL.Texture as Texture exposing (Texture, Error)
+import Json.Decode as Decode exposing (Decoder, Value)
 
 
 type alias Model =
     { texture : Maybe Texture
     , keys : Keys
-    , size : Window.Size
+    , size : { width : Float, height : Float }
     , person : Person
     }
 
@@ -34,9 +35,10 @@ type alias Person =
 
 type Msg
     = TextureLoaded (Result Error Texture)
-    | KeyChange Bool Keyboard.KeyCode
-    | Animate Time
-    | Resize Window.Size
+    | KeyChange Bool Int
+    | Animate Float
+    | GetViewport Viewport
+    | Resize Int Int
 
 
 type alias Keys =
@@ -48,10 +50,10 @@ type alias Keys =
     }
 
 
-main : Program Never Model Msg
+main : Program Value Model Msg
 main =
-    Html.program
-        { init = init
+    Browser.element
+        { init = \_ -> init
         , view = view
         , subscriptions = subscriptions
         , update = update
@@ -68,11 +70,11 @@ init =
     ( { texture = Nothing
       , person = Person (vec3 0 eyeLevel -10) (vec3 0 0 0)
       , keys = Keys False False False False False
-      , size = Window.Size 0 0
+      , size = { width = 0, height = 0 }
       }
     , Cmd.batch
         [ Task.attempt TextureLoaded (Texture.load "texture/wood-crate.jpg")
-        , Task.perform Resize Window.size
+        , Task.perform GetViewport getViewport
         ]
     )
 
@@ -80,10 +82,10 @@ init =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ AnimationFrame.diffs Animate
-        , Keyboard.downs (KeyChange True)
-        , Keyboard.ups (KeyChange False)
-        , Window.resizes Resize
+        [ onAnimationFrameDelta Animate
+        , onKeyDown (Decode.map (KeyChange True) keyCode)
+        , onKeyUp (Decode.map (KeyChange False) keyCode)
+        , onResize Resize
         ]
 
 
@@ -96,8 +98,25 @@ update action model =
         KeyChange on code ->
             ( { model | keys = keyFunc on code model.keys }, Cmd.none )
 
-        Resize size ->
-            ( { model | size = size }, Cmd.none )
+        GetViewport { viewport } ->
+            ( { model
+                | size =
+                    { width = viewport.width
+                    , height = viewport.height
+                    }
+              }
+            , Cmd.none
+            )
+
+        Resize width height ->
+            ( { model
+                | size =
+                    { width = toFloat width
+                    , height = toFloat height
+                    }
+              }
+            , Cmd.none
+            )
 
         Animate dt ->
             ( { model
@@ -111,7 +130,7 @@ update action model =
             )
 
 
-keyFunc : Bool -> Keyboard.KeyCode -> Keys -> Keys
+keyFunc : Bool -> Int -> Keys -> Keys
 keyFunc on keyCode keys =
     case keyCode of
         32 ->
@@ -200,33 +219,31 @@ gravity dt person =
 view : Model -> Html Msg
 view { size, person, texture } =
     div
-        [ style
-            [ ( "width", toString size.width ++ "px" )
-            , ( "height", toString size.height ++ "px" )
-            , ( "position", "relative" )
-            ]
+        [ style "width" (String.fromFloat size.width ++ "px")
+        , style "height" (String.fromFloat size.height ++ "px")
+        , style "position" "absolute"
+        , style "left" "0"
+        , style "top" "0"
         ]
         [ WebGL.toHtmlWith
             [ WebGL.depth 1
             ]
-            [ width size.width
-            , height size.height
-            , style [ ( "display", "block" ) ]
+            [ width (round size.width)
+            , height (round size.height)
+            , style "display" "block"
             ]
             (texture
                 |> Maybe.map (scene size person)
                 |> Maybe.withDefault []
             )
         , div
-            [ style
-                [ ( "position", "absolute" )
-                , ( "font-family", "monospace" )
-                , ( "color", "white" )
-                , ( "text-align", "center" )
-                , ( "left", "20px" )
-                , ( "right", "20px" )
-                , ( "top", "20px" )
-                ]
+            [ style "position" "absolute"
+            , style "font-family" "monospace"
+            , style "color" "white"
+            , style "text-align" "center"
+            , style "left" "20px"
+            , style "right" "20px"
+            , style "top" "20px"
             ]
             [ text message ]
         ]
@@ -238,12 +255,12 @@ message =
         ++ "Arrows keys to move, space bar to jump."
 
 
-scene : Window.Size -> Person -> Texture -> List Entity
+scene : { width : Float, height : Float } -> Person -> Texture -> List Entity
 scene { width, height } person texture =
     let
         perspective =
             Mat4.mul
-                (Mat4.makePerspective 45 (toFloat width / toFloat height) 0.01 100)
+                (Mat4.makePerspective 45 (width / height) 0.01 100)
                 (Mat4.makeLookAt person.position (Vec3.add person.position Vec3.k) Vec3.j)
     in
     [ WebGL.entity
