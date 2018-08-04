@@ -67,7 +67,9 @@ subscriptions _ =
 
 mousePosition : Decoder Action
 mousePosition =
-    Decode.succeed (MouseMove { x = 0, y = 0 })
+    Decode.map2 (\x y -> MouseMove { x = x, y = y })
+        (Decode.field "pageX" Decode.float)
+        (Decode.field "pageY" Decode.float)
 
 
 update : Action -> Model -> ( Model, Cmd Action )
