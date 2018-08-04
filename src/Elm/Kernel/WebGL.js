@@ -37,8 +37,8 @@ var _WebGL_unsafeCoerceGLSL = function (src) {
 // eslint-disable-next-line no-unused-vars
 var _WebGL_entity = F5(function (settings, vert, frag, mesh, uniforms) {
 
-  if (!mesh.__id) {
-    mesh.__id = _WebGL_guid++;
+  if (!mesh.__$id) {
+    mesh.__$id = _WebGL_guid++;
   }
 
   return {
@@ -366,46 +366,46 @@ var _WebGL_drawGL = F2(function (model, domNode) {
 
     var progid;
     var program;
-    if (entity.__vert.__id && entity.__frag.__id) {
-      progid = _WebGL_getProgID(entity.__vert.__id, entity.__frag.__id);
+    if (entity.__vert.__$id && entity.__frag.__$id) {
+      progid = _WebGL_getProgID(entity.__vert.__$id, entity.__frag.__$id);
       program = model.__cache.programs[progid];
     }
 
     if (!program) {
 
       var vshader;
-      if (entity.__vert.__id) {
-        vshader = model.__cache.shaders[entity.__vert.__id];
+      if (entity.__vert.__$id) {
+        vshader = model.__cache.shaders[entity.__vert.__$id];
       } else {
-        entity.__vert.__id = _WebGL_guid++;
+        entity.__vert.__$id = _WebGL_guid++;
       }
 
       if (!vshader) {
         vshader = _WebGL_doCompile(gl, entity.__vert.src, gl.VERTEX_SHADER);
-        model.__cache.shaders[entity.__vert.__id] = vshader;
+        model.__cache.shaders[entity.__vert.__$id] = vshader;
       }
 
       var fshader;
-      if (entity.__frag.__id) {
-        fshader = model.__cache.shaders[entity.__frag.__id];
+      if (entity.__frag.__$id) {
+        fshader = model.__cache.shaders[entity.__frag.__$id];
       } else {
-        entity.__frag.__id = _WebGL_guid++;
+        entity.__frag.__$id = _WebGL_guid++;
       }
 
       if (!fshader) {
         fshader = _WebGL_doCompile(gl, entity.__frag.src, gl.FRAGMENT_SHADER);
-        model.__cache.shaders[entity.__frag.__id] = fshader;
+        model.__cache.shaders[entity.__frag.__$id] = fshader;
       }
 
       program = _WebGL_doLink(gl, vshader, fshader);
-      progid = _WebGL_getProgID(entity.__vert.__id, entity.__frag.__id);
+      progid = _WebGL_getProgID(entity.__vert.__$id, entity.__frag.__$id);
       model.__cache.programs[progid] = program;
 
     }
 
     gl.useProgram(program);
 
-    progid = progid || _WebGL_getProgID(entity.__vert.__id, entity.__frag.__id);
+    progid = progid || _WebGL_getProgID(entity.__vert.__$id, entity.__frag.__$id);
     var setters = model.__cache.uniformSetters[progid];
     if (!setters) {
       setters = _WebGL_createUniformSetters(gl, model, program);
@@ -414,11 +414,11 @@ var _WebGL_drawGL = F2(function (model, domNode) {
 
     _WebGL_setUniforms(setters, entity.__uniforms);
 
-    var buffer = model.__cache.buffers[entity.__mesh.__id];
+    var buffer = model.__cache.buffers[entity.__mesh.__$id];
 
     if (!buffer) {
       buffer = _WebGL_doBindSetup(gl, entity.__mesh);
-      model.__cache.buffers[entity.__mesh.__id] = buffer;
+      model.__cache.buffers[entity.__mesh.__$id] = buffer;
     }
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indexBuffer);
@@ -490,11 +490,11 @@ function _WebGL_createUniformSetters(gl, model, program) {
         var currentTexture = textureCounter++;
         return function (texture) {
           gl.activeTexture(gl.TEXTURE0 + currentTexture);
-          var tex = model.__cache.textures[texture.__id];
+          var tex = model.__cache.textures[texture.__$id];
           if (!tex) {
             _WebGL_log('Created texture');
-            tex = texture.__createTexture(gl);
-            model.__cache.textures[texture.__id] = tex;
+            tex = texture.__$createTexture(gl);
+            model.__cache.textures[texture.__$id] = tex;
           }
           gl.bindTexture(gl.TEXTURE_2D, tex);
           gl.uniform1i(uniformLocation, currentTexture);
