@@ -3,7 +3,7 @@
     "name": "elm-explorations/webgl",
     "summary": "A library for general 3D rendering with WebGL",
     "license": "BSD-3-Clause",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "exposed-modules": [
         "WebGL",
         "WebGL.Settings",
