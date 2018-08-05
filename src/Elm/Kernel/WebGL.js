@@ -55,6 +55,7 @@ var _WebGL_entity = F5(function (settings, vert, frag, mesh, uniforms) {
 // eslint-disable-next-line no-unused-vars
 var _WebGL_enableBlend = F2(function (gl, setting) {
   gl.enable(gl.BLEND);
+  // a   b   c   d   e   f   g h i j
   // eq1 f11 f12 eq2 f21 f22 r g b a
   gl.blendEquationSeparate(setting.a, setting.d);
   gl.blendFuncSeparate(setting.b, setting.c, setting.e, setting.f);
@@ -64,6 +65,7 @@ var _WebGL_enableBlend = F2(function (gl, setting) {
 // eslint-disable-next-line no-unused-vars
 var _WebGL_enableDepthTest = F2(function (gl, setting) {
   gl.enable(gl.DEPTH_TEST);
+  // a    b    c    d
   // func mask near far
   gl.depthFunc(setting.a);
   gl.depthMask(setting.b);
@@ -73,12 +75,13 @@ var _WebGL_enableDepthTest = F2(function (gl, setting) {
 // eslint-disable-next-line no-unused-vars
 var _WebGL_enableStencilTest = F2(function (gl, setting) {
   gl.enable(gl.STENCIL_TEST);
+  // a   b    c         d     e     f      g      h     i     j      k
   // ref mask writeMask test1 fail1 zfail1 zpass1 test2 fail2 zfail2 zpass2
   gl.stencilFuncSeparate(gl.FRONT, setting.d, setting.a, setting.b);
   gl.stencilOpSeparate(gl.FRONT, setting.e, setting.f, setting.g);
   gl.stencilMaskSeparate(gl.FRONT, setting.c);
   gl.stencilFuncSeparate(gl.BACK, setting.h, setting.a, setting.b);
-  gl.stencilOpSeparate(gl.BACK, setting.i, setting.j, setting.b0);
+  gl.stencilOpSeparate(gl.BACK, setting.i, setting.j, setting.k);
   gl.stencilMaskSeparate(gl.BACK, setting.c);
 });
 
