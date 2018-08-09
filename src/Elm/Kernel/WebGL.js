@@ -224,9 +224,10 @@ function _WebGL_getAttributeInfo(gl, type) {
  *         We use its name to grab the record by name and also to know
  *         how many elements we need to grab.
  *  @param {Mesh} mesh The mesh coming in from Elm.
+ *  @param {Object} attributes The mapping between the attribute names and Elm fields
  *  @return {WebGLBuffer}
  */
-function _WebGL_doBindAttribute(gl, attribute, mesh) {
+function _WebGL_doBindAttribute(gl, attribute, mesh, attributes) {
   // The length of the number of vertices that
   // complete one 'thing' based on the drawing mode.
   // ie, 2 for Lines, 3 for Triangles, etc.
@@ -262,7 +263,7 @@ function _WebGL_doBindAttribute(gl, attribute, mesh) {
   var array = new attributeInfo.type(_WebGL_listLength(mesh.b) * attributeInfo.size * elemSize);
 
   _WebGL_listEach(function (elem) {
-    dataFill(array, attributeInfo.size, dataIdx, elem, attribute.name);
+    dataFill(array, attributeInfo.size, dataIdx, elem, attributes[attribute.name] || attribute.name);
     dataIdx += attributeInfo.size * elemSize;
   }, mesh.b);
 
@@ -400,22 +401,27 @@ var _WebGL_drawGL = F2(function (model, domNode) {
         model.__cache.shaders[entity.__frag.__$id] = fshader;
       }
 
-      program = _WebGL_doLink(gl, vshader, fshader);
+      var glProgram = _WebGL_doLink(gl, vshader, fshader);
+
+      program = {
+        glProgram: glProgram,
+        attributes: Object.assign({}, entity.b.attributes, entity.c.attributes),
+        uniformSetters: _WebGL_createUniformSetters(
+          gl,
+          model,
+          glProgram,
+          Object.assign({}, entity.b.uniforms, entity.c.uniforms)
+        )
+      };
+
       progid = _WebGL_getProgID(entity.__vert.__$id, entity.__frag.__$id);
       model.__cache.programs[progid] = program;
 
     }
 
-    gl.useProgram(program);
+    gl.useProgram(program.glProgram);
 
-    progid = progid || _WebGL_getProgID(entity.__vert.__$id, entity.__frag.__$id);
-    var setters = model.__cache.uniformSetters[progid];
-    if (!setters) {
-      setters = _WebGL_createUniformSetters(gl, model, program);
-      model.__cache.uniformSetters[progid] = setters;
-    }
-
-    _WebGL_setUniforms(setters, entity.__uniforms);
+    _WebGL_setUniforms(program.uniformSetters, entity.__uniforms);
 
     var buffer = model.__cache.buffers[entity.__mesh.__$id];
 
@@ -426,16 +432,16 @@ var _WebGL_drawGL = F2(function (model, domNode) {
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indexBuffer);
 
-    var numAttributes = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+    var numAttributes = gl.getProgramParameter(program.glProgram, gl.ACTIVE_ATTRIBUTES);
 
     for (var i = 0; i < numAttributes; i++) {
-      var attribute = gl.getActiveAttrib(program, i);
+      var attribute = gl.getActiveAttrib(program.glProgram, i);
 
-      var attribLocation = gl.getAttribLocation(program, attribute.name);
+      var attribLocation = gl.getAttribLocation(program.glProgram, attribute.name);
       gl.enableVertexAttribArray(attribLocation);
 
       if (buffer.buffers[attribute.name] === undefined) {
-        buffer.buffers[attribute.name] = _WebGL_doBindAttribute(gl, attribute, entity.__mesh);
+        buffer.buffers[attribute.name] = _WebGL_doBindAttribute(gl, attribute, entity.__mesh, program.attributes);
       }
       var attributeBuffer = buffer.buffers[attribute.name];
       var attributeInfo = _WebGL_getAttributeInfo(gl, attribute.type);
@@ -460,7 +466,7 @@ var _WebGL_drawGL = F2(function (model, domNode) {
   return domNode;
 });
 
-function _WebGL_createUniformSetters(gl, model, program) {
+function _WebGL_createUniformSetters(gl, model, program, uniformsMap) {
   var textureCounter = 0;
   function createUniformSetter(program, uniform) {
     var uniformLocation = gl.getUniformLocation(program, uniform.name);
@@ -516,7 +522,7 @@ function _WebGL_createUniformSetters(gl, model, program) {
   var numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
   for (var i = 0; i < numUniforms; i++) {
     var uniform = gl.getActiveUniform(program, i);
-    uniformSetters[uniform.name] = createUniformSetter(program, uniform);
+    uniformSetters[uniformsMap[uniform.name] || uniform.name] = createUniformSetter(program, uniform);
   }
 
   return uniformSetters;
@@ -585,7 +591,7 @@ var _WebGL_enableClearColor = F2(function (options, option) {
  *  Creates canvas and schedules initial _WebGL_drawGL
  *  @param {Object} model
  *  @param {Object} model.__cache that may contain the following properties:
-           gl, shaders, programs, uniformSetters, buffers, textures
+           gl, shaders, programs, buffers, textures
  *  @param {List<Option>} model.__options list of options coming from Elm
  *  @param {List<Entity>} model.__entities list of entities coming from Elm
  *  @return {HTMLElement} <canvas> if WebGL is supported, otherwise a <div>
@@ -625,7 +631,6 @@ function _WebGL_render(model) {
   model.__cache.gl = gl;
   model.__cache.shaders = [];
   model.__cache.programs = {};
-  model.__cache.uniformSetters = {};
   model.__cache.buffers = [];
   model.__cache.textures = [];
 
