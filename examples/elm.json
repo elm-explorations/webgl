@@ -11,7 +11,7 @@
             "elm/html": "1.0.0",
             "elm/json": "1.0.0",
             "elm-explorations/linear-algebra": "1.0.1",
-            "elm-explorations/webgl": "1.0.2"
+            "elm-explorations/webgl": "2.0.1"
         },
         "indirect": {
             "elm/time": "1.0.0",
