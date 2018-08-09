@@ -41,10 +41,10 @@ var _Texture_load = F6(function (magnify, mininify, horizontalWrap, verticalWrap
       if (isSizeValid) {
         callback(__Scheduler_succeed({
           $: __0_TEXTURE,
-          __$id: _Texture_guid++,
+          id: _Texture_guid++,
           __$createTexture: createTexture,
-          __$width: width,
-          __$height: height
+          __width: width,
+          __height: height
         }));
       } else {
         callback(__Scheduler_fail(A2(
@@ -66,5 +66,5 @@ var _Texture_load = F6(function (magnify, mininify, horizontalWrap, verticalWrap
 
 // eslint-disable-next-line no-unused-vars
 var _Texture_size = function (texture) {
-  return __Utils_Tuple2(texture.__$width, texture.__$height);
+  return __Utils_Tuple2(texture.__width, texture.__height);
 };
