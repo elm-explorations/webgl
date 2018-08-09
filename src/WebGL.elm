@@ -21,7 +21,6 @@ module WebGL
         , triangleFan
         , triangleStrip
         , triangles
-        , unsafeShader
         )
 
 {-| The WebGL API is for high performance rendering. Definitely read about
@@ -60,11 +59,6 @@ before trying to do too much with just the documentation provided here.
 
 @docs indexedTriangles, lines, lineStrip, lineLoop, points, triangleFan
 @docs triangleStrip
-
-
-# Unsafe Shader Creation (for library writers)
-
-@docs unsafeShader
 
 -}
 
@@ -211,14 +205,6 @@ package.
 -}
 type Shader attributes uniforms varyings
     = Shader
-
-
-{-| Creates a shader with a raw string of GLSL. It is intended specifically
-for library writers, who want to create shader combinators.
--}
-unsafeShader : String -> Shader attributes uniforms varyings
-unsafeShader =
-    Elm.Kernel.WebGL.unsafeCoerceGLSL
 
 
 {-| Conceptually, an encapsulation of the instructions to render something.

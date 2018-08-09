@@ -30,11 +30,6 @@ var _WebGL_rAF = typeof requestAnimationFrame !== 'undefined' ?
   function (cb) { setTimeout(cb, 1000 / 60); };
 
 // eslint-disable-next-line no-unused-vars
-var _WebGL_unsafeCoerceGLSL = function (src) {
-  return { src: src };
-};
-
-// eslint-disable-next-line no-unused-vars
 var _WebGL_entity = F5(function (settings, vert, frag, mesh, uniforms) {
 
   if (!mesh.__$id) {
