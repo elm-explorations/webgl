@@ -8,7 +8,7 @@ mkdir -p gh-pages/examples
 # compile JS using Elm
 cd examples
 for i in crate cube first-person thwomp triangle; do
-  elm make $i.elm --yes --output ../gh-pages/examples/$i.html
+  elm make $i.elm --output ../gh-pages/examples/$i.html
 done
 
 # copy the textures
