@@ -1,18 +1,18 @@
 # WebGL for Elm
 
-[A simple API](http://package.elm-lang.org/packages/elm-community/webgl/latest/WebGL)
+[A simple API](https://package.elm-lang.org/packages/elm-explorations/webgl/latest/WebGL)
 for rendering with WebGL. This is useful for both 2D and 3D
 rendering because it lets you take advantage of hardware acceleration with the
 GPU, meaning you can render things more quickly.
 
-[Here are some examples](https://github.com/elm-community/webgl/tree/master/examples) so you can get a feel for the API, but make sure you
+[Here are some examples](https://github.com/elm-explorations/webgl/tree/master/examples) so you can get a feel for the API, but make sure you
 read on to learn how WebGL and the GPU really work!
 
-[![Triangle](http://webgl.elm-community.org/examples/screenshots/triangle.jpg)](http://webgl.elm-community.org/examples/triangle.html)
-[![Cube](http://webgl.elm-community.org/examples/screenshots/cube.jpg)](http://webgl.elm-community.org/examples/cube.html)
-[![Crate](http://webgl.elm-community.org/examples/screenshots/crate.jpg)](http://webgl.elm-community.org/examples/crate.html)
-[![Thwomp](http://webgl.elm-community.org/examples/screenshots/thwomp.jpg)](http://webgl.elm-community.org/examples/thwomp.html)
-[![FirstPerson](http://webgl.elm-community.org/examples/screenshots/first-person.jpg)](http://webgl.elm-community.org/examples/first-person.html)
+[![Triangle](https://elm-explorations.github.io/webgl/examples/screenshots/triangle.jpg)](https://elm-explorations.github.io/webgl/examples/triangle.html)
+[![Cube](https://elm-explorations.github.io/webgl/examples/screenshots/cube.jpg)](https://elm-explorations.github.io/webgl/examples/cube.html)
+[![Crate](https://elm-explorations.github.io/webgl/examples/screenshots/crate.jpg)](https://elm-explorations.github.io/webgl/examples/crate.html)
+[![Thwomp](https://elm-explorations.github.io/webgl/examples/screenshots/thwomp.jpg)](https://elm-explorations.github.io/webgl/examples/thwomp.html)
+[![FirstPerson](https://elm-explorations.github.io/webgl/examples/screenshots/first-person.jpg)](https://elm-explorations.github.io/webgl/examples/first-person.html)
 
 ## Understanding WebGL
 
@@ -43,13 +43,13 @@ transformation for each bone.
 
 ### Shaders
 
-A [shader](http://en.wikipedia.org/wiki/Shader) is all turning meshes into
+A [shader](https://en.wikipedia.org/wiki/Shader) is all turning meshes into
 pictures. A shader is a program that runs on the GPU, so it benefits from
 lots of parallelization. As a general rule, you want to be doing computation
 here rather than on the CPU if possible.
 
 In Elm, shaders are defined with a language called
-[GLSL](http://en.wikipedia.org/wiki/OpenGL_Shading_Language). These are programs
+[GLSL](https://en.wikipedia.org/wiki/OpenGL_Shading_Language). These are programs
 that take in small high-level values and do a bunch of rendering based on that.
 For example, you can send over a matrix that represents where the camera should
 be and all of the meshes loaded onto the GPU will be transformed accordingly.
@@ -59,17 +59,17 @@ be and all of the meshes loaded onto the GPU will be transformed accordingly.
 The following diagram illustrates the entire pipeline. Keep reading past the
 diagram, all the terms will be explained!
 
-![WebGL Pipeline](https://raw.githubusercontent.com/elm-community/webgl/master/pipeline.png)
+![WebGL Pipeline](https://raw.githubusercontent.com/elm-explorations/webgl/master/pipeline.png)
 
 We start with a mesh. It's a bunch of raw data points that we want to render on
 screen. From there, the data flows through two types of shaders:
 
- * [**Vertex Shaders**](http://en.wikipedia.org/wiki/Shader#Vertex_shaders) &mdash;
+ * [**Vertex Shaders**](https://en.wikipedia.org/wiki/Shader#Vertex_shaders) &mdash;
    Our mesh is made up of lots of triangles. Each corner of a triangle is called a
    *vertex*. The vertex shader has access to all of the attributes of each vertex,
    like position and color, letting us move triangles around or change their color.
 
- * [**Fragment Shaders**](http://en.wikipedia.org/wiki/Shader#Pixel_shaders) &mdash;
+ * [**Fragment Shaders**](https://en.wikipedia.org/wiki/Shader#Pixel_shaders) &mdash;
    Also known as pixel shaders, these shaders are like filters on individual
    pixels. They let you work with pixels to add lighting effects or add
    postprocessing effects like blur or edge-detection.
@@ -114,7 +114,7 @@ with uniform variables in a Vertex Shader.
 ## Writing Shaders
 
 Shaders are written in a language called
-[GLSL](http://en.wikipedia.org/wiki/OpenGL_Shading_Language). This is a widely
+[GLSL](https://en.wikipedia.org/wiki/OpenGL_Shading_Language). This is a widely
 used language for shaders with [websites](https://www.shadertoy.com) devoted
 to sharing creative demos, so you will often be able to use that shader
 code directly in Elm. A basic vertex shader could be defined like this:

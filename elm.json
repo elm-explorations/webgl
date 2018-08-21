@@ -1,9 +1,9 @@
 {
     "type": "package",
     "name": "elm-explorations/webgl",
-    "summary": "A library for general 3D rendering with WebGL",
+    "summary": "Functional rendering with WebGL in Elm",
     "license": "BSD-3-Clause",
-    "version": "2.0.1",
+    "version": "1.0.0",
     "exposed-modules": [
         "WebGL",
         "WebGL.Settings",
