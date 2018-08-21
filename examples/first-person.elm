@@ -1,27 +1,28 @@
-module Main exposing (main)
+module FirstPerson exposing (main)
 
 {-
    Try adding the ability to crouch or to land on top of the crate.
 -}
 
-import AnimationFrame
+import Browser
+import Browser.Events exposing (onAnimationFrameDelta, onKeyDown, onKeyUp, onResize)
+import Browser.Dom exposing (getViewport, Viewport)
 import Html exposing (Html, text, div)
 import Html.Attributes exposing (width, height, style)
-import Keyboard
+import Html.Events exposing (keyCode)
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector2 as Vec2 exposing (Vec2, vec2)
 import Math.Vector3 as Vec3 exposing (Vec3, vec3)
 import Task exposing (Task)
-import Time exposing (Time)
 import WebGL exposing (Mesh, Shader, Entity)
 import WebGL.Texture as Texture exposing (Texture, Error)
-import Window
+import Json.Decode as Decode exposing (Decoder, Value)
 
 
 type alias Model =
     { texture : Maybe Texture
     , keys : Keys
-    , size : Window.Size
+    , size : { width : Float, height : Float }
     , person : Person
     }
 
@@ -34,9 +35,10 @@ type alias Person =
 
 type Msg
     = TextureLoaded (Result Error Texture)
-    | KeyChange Bool Keyboard.KeyCode
-    | Animate Time
-    | Resize Window.Size
+    | KeyChange Bool Int
+    | Animate Float
+    | GetViewport Viewport
+    | Resize Int Int
 
 
 type alias Keys =
@@ -48,10 +50,10 @@ type alias Keys =
     }
 
 
-main : Program Never Model Msg
+main : Program Value Model Msg
 main =
-    Html.program
-        { init = init
+    Browser.element
+        { init = \_ -> init
         , view = view
         , subscriptions = subscriptions
         , update = update
@@ -68,11 +70,11 @@ init =
     ( { texture = Nothing
       , person = Person (vec3 0 eyeLevel -10) (vec3 0 0 0)
       , keys = Keys False False False False False
-      , size = Window.Size 0 0
+      , size = { width = 0, height = 0 }
       }
     , Cmd.batch
         [ Task.attempt TextureLoaded (Texture.load "texture/wood-crate.jpg")
-        , Task.perform Resize Window.size
+        , Task.perform GetViewport getViewport
         ]
     )
 
@@ -80,10 +82,10 @@ init =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ AnimationFrame.diffs Animate
-        , Keyboard.downs (KeyChange True)
-        , Keyboard.ups (KeyChange False)
-        , Window.resizes Resize
+        [ onAnimationFrameDelta Animate
+        , onKeyDown (Decode.map (KeyChange True) keyCode)
+        , onKeyUp (Decode.map (KeyChange False) keyCode)
+        , onResize Resize
         ]
 
 
@@ -96,8 +98,25 @@ update action model =
         KeyChange on code ->
             ( { model | keys = keyFunc on code model.keys }, Cmd.none )
 
-        Resize size ->
-            ( { model | size = size }, Cmd.none )
+        GetViewport { viewport } ->
+            ( { model
+                | size =
+                    { width = viewport.width
+                    , height = viewport.height
+                    }
+              }
+            , Cmd.none
+            )
+
+        Resize width height ->
+            ( { model
+                | size =
+                    { width = toFloat width
+                    , height = toFloat height
+                    }
+              }
+            , Cmd.none
+            )
 
         Animate dt ->
             ( { model
@@ -111,7 +130,7 @@ update action model =
             )
 
 
-keyFunc : Bool -> Keyboard.KeyCode -> Keys -> Keys
+keyFunc : Bool -> Int -> Keys -> Keys
 keyFunc on keyCode keys =
     case keyCode of
         32 ->
@@ -139,24 +158,28 @@ move { left, right, up, down, space } person =
         direction a b =
             if a == b then
                 0
+
             else if a then
                 1
+
             else
                 -1
 
         vy =
             if space then
                 2
+
             else
                 Vec3.getY person.velocity
     in
-        if Vec3.getY person.position <= eyeLevel then
-            { person
-                | velocity =
-                    vec3 (direction left right) vy (direction up down)
-            }
-        else
-            person
+    if Vec3.getY person.position <= eyeLevel then
+        { person
+            | velocity =
+                vec3 (direction left right) vy (direction up down)
+        }
+
+    else
+        person
 
 
 physics : Float -> Person -> Person
@@ -165,13 +188,14 @@ physics dt person =
         position =
             Vec3.add person.position (Vec3.scale dt person.velocity)
     in
-        { person
-            | position =
-                if Vec3.getY position < eyeLevel then
-                    Vec3.setY eyeLevel position
-                else
-                    position
-        }
+    { person
+        | position =
+            if Vec3.getY position < eyeLevel then
+                Vec3.setY eyeLevel position
+
+            else
+                position
+    }
 
 
 gravity : Float -> Person -> Person
@@ -183,6 +207,7 @@ gravity dt person =
                     (Vec3.getY person.velocity - 2 * dt)
                     person.velocity
         }
+
     else
         person
 
@@ -194,33 +219,31 @@ gravity dt person =
 view : Model -> Html Msg
 view { size, person, texture } =
     div
-        [ style
-            [ ( "width", toString size.width ++ "px" )
-            , ( "height", toString size.height ++ "px" )
-            , ( "position", "relative" )
-            ]
+        [ style "width" (String.fromFloat size.width ++ "px")
+        , style "height" (String.fromFloat size.height ++ "px")
+        , style "position" "absolute"
+        , style "left" "0"
+        , style "top" "0"
         ]
         [ WebGL.toHtmlWith
             [ WebGL.depth 1
             ]
-            [ width size.width
-            , height size.height
-            , style [ ( "display", "block" ) ]
+            [ width (round size.width)
+            , height (round size.height)
+            , style "display" "block"
             ]
             (texture
                 |> Maybe.map (scene size person)
                 |> Maybe.withDefault []
             )
         , div
-            [ style
-                [ ( "position", "absolute" )
-                , ( "font-family", "monospace" )
-                , ( "color", "white" )
-                , ( "text-align", "center" )
-                , ( "left", "20px" )
-                , ( "right", "20px" )
-                , ( "top", "20px" )
-                ]
+            [ style "position" "absolute"
+            , style "font-family" "monospace"
+            , style "color" "white"
+            , style "text-align" "center"
+            , style "left" "20px"
+            , style "right" "20px"
+            , style "top" "20px"
             ]
             [ text message ]
         ]
@@ -232,22 +255,22 @@ message =
         ++ "Arrows keys to move, space bar to jump."
 
 
-scene : Window.Size -> Person -> Texture -> List Entity
+scene : { width : Float, height : Float } -> Person -> Texture -> List Entity
 scene { width, height } person texture =
     let
         perspective =
             Mat4.mul
-                (Mat4.makePerspective 45 (toFloat width / toFloat height) 0.01 100)
+                (Mat4.makePerspective 45 (width / height) 0.01 100)
                 (Mat4.makeLookAt person.position (Vec3.add person.position Vec3.k) Vec3.j)
     in
-        [ WebGL.entity
-            vertexShader
-            fragmentShader
-            crate
-            { texture = texture
-            , perspective = perspective
-            }
-        ]
+    [ WebGL.entity
+        vertexShader
+        fragmentShader
+        crate
+        { texture = texture
+        , perspective = perspective
+        }
+    ]
 
 
 
@@ -284,7 +307,7 @@ rotatedSquare ( angleXZ, angleYZ ) =
         transformTriangle ( a, b, c ) =
             ( transform a, transform b, transform c )
     in
-        List.map transformTriangle square
+    List.map transformTriangle square
 
 
 square : List ( Vertex, Vertex, Vertex )
@@ -302,9 +325,9 @@ square =
         bottomRight =
             Vertex (vec3 1 -1 1) (vec2 1 0)
     in
-        [ ( topLeft, topRight, bottomLeft )
-        , ( bottomLeft, topRight, bottomRight )
-        ]
+    [ ( topLeft, topRight, bottomLeft )
+    , ( bottomLeft, topRight, bottomRight )
+    ]
 
 
 

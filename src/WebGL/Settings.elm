@@ -1,27 +1,34 @@
 module WebGL.Settings
     exposing
-        ( Setting
-        , scissor
-        , colorMask
-        , polygonOffset
-        , sampleCoverage
-        , sampleAlphaToCoverage
-        , cullFace
-        , FaceMode
-        , front
+        ( FaceMode
+        , Setting
         , back
+        , colorMask
+        , cullFace
+        , front
         , frontAndBack
+        , polygonOffset
+        , sampleAlphaToCoverage
+        , sampleCoverage
+        , scissor
         )
 
-{-| # Settings
-@docs Setting, scissor, colorMask, polygonOffset, sampleAlphaToCoverage,
-  sampleCoverage, cullFace
+{-|
+
+
+# Settings
+
+@docs Setting, scissor, colorMask, polygonOffset, sampleAlphaToCoverage
+@docs sampleCoverage, cullFace
+
 
 ## Face Modes
+
 @docs FaceMode, front, back, frontAndBack
+
 -}
 
-import WebGL.Settings.Internal as I
+import WebGL.Internal as I
 
 
 {-| Lets you customize how an [`Entity`](WebGL#Entity) is rendered. So if you
@@ -45,6 +52,7 @@ type alias Setting =
 screen to a specified rectangle.
 
 The arguments are the coordinates of the lower left corner, width and height.
+
 -}
 scissor : Int -> Int -> Int -> Int -> Setting
 scissor =
@@ -72,12 +80,12 @@ into the depth buffer.
 
 This adds an `offset = m * factor + r * units`, where
 
-* `m = max (dz / dx) (dz / dy)` is the maximum depth slope of the polygon.
-  The depth slope is the change in `z` (depth) values divided by the change in
-  either `x` or `y` coordinates, as you traverse a polygon;
-* `r` is the smallest value guaranteed to produce a resolvable difference in
-  window coordinate depth values. The value `r` is an implementation-specific
-  constant.
+  - `m = max (dz / dx) (dz / dy)` is the maximum depth slope of the polygon.
+    The depth slope is the change in `z` (depth) values divided by the change in
+    either `x` or `y` coordinates, as you traverse a polygon;
+  - `r` is the smallest value guaranteed to produce a resolvable difference in
+    window coordinate depth values. The value `r` is an implementation-specific
+    constant.
 
 The question is: "How much offset is enough?". It really depends on the slope.
 For polygons that are parallel to the near and far clipping planes,
@@ -90,6 +98,7 @@ can be significantly greater than zero. Use small non-zero values for factor,
 such as `0.75` or `1.0` should be enough to generate distinct depth values:
 
     polygonOffset 0.75 1
+
 -}
 polygonOffset : Float -> Float -> Setting
 polygonOffset =
@@ -107,6 +116,7 @@ by the alpha value at the corresponding sample location. The temporary coverage
 value is then ANDed with the fragment coverage value.
 
 Requires [`WebGL.antialias`](WebGL#antialias) option.
+
 -}
 sampleAlphaToCoverage : Setting
 sampleAlphaToCoverage =
@@ -116,11 +126,12 @@ sampleAlphaToCoverage =
 {-| Specifies multisample coverage parameters. The fragment's coverage is ANDed
 with the temporary coverage value.
 
-* the first argument specifies sample coverage value, that is clamped to the
-  range from 0 to 1;
-* the second argument represents if the coverage masks should be inverted.
+  - the first argument specifies sample coverage value, that is clamped to the
+    range from 0 to 1;
+  - the second argument represents if the coverage masks should be inverted.
 
 Requires [`WebGL.antialias`](WebGL#antialias) option.
+
 -}
 sampleCoverage : Float -> Bool -> Setting
 sampleCoverage =

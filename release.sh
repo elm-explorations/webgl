@@ -13,7 +13,7 @@ git push
 cleanup="examples gh-pages.sh pipeline.png CONTRIBUTING.md .eslintrc.json release.sh"
 last_commit=$(git rev-parse HEAD)
 
-git clone --reference . git@github.com:elm-community/webgl.git release
+git clone --reference . git@github.com:elm-explorations/webgl.git release
 (
   cd release
   git checkout $last_commit

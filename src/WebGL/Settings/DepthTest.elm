@@ -1,38 +1,43 @@
 module WebGL.Settings.DepthTest
     exposing
-        ( default
-        , Options
-        , less
-        , never
+        ( Options
         , always
+        , default
         , equal
         , greater
-        , notEqual
-        , lessOrEqual
         , greaterOrEqual
+        , less
+        , lessOrEqual
+        , never
+        , notEqual
         )
 
 {-| You can read more about depth-testing in the
 [OpenGL wiki](https://www.khronos.org/opengl/wiki/Depth_Test)
 or [OpenGL docs](https://www.opengl.org/sdk/docs/man2/xhtml/glDepthFunc.xml).
 
+
 # Depth Test
+
 @docs default
 
+
 # Custom Tests
-@docs Options, less, never, always, equal, greater, notEqual,
-  lessOrEqual, greaterOrEqual
+
+@docs Options, less, never, always, equal, greater, notEqual
+@docs lessOrEqual, greaterOrEqual
+
 -}
 
+import WebGL.Internal as I
 import WebGL.Settings exposing (Setting)
-import WebGL.Settings.Internal as I
 
 
 {-| With every pixel, we have to figure out which color to show.
 
 Imagine you have many entities in the same line of sight. The floor,
 then a table, then a plate. When depth-testing is off, you go through
-the entities in the order they appear in your *code*! That means if
+the entities in the order they appear in your _code_! That means if
 you describe the floor last, it will be “on top” of the table and plate.
 
 Depth-testing means the color is chosen based on the distance from the
@@ -76,7 +81,7 @@ If the test passes, the current value will be written into the depth buffer, so
 the next pixels will be tested against it. Sometimes you may want to disable
 writing. For example, when using depth test together with stencil test to create
 [reflection effect](https://open.gl/depthstencils) you want to draw the
-reflection *underneath* the floor, in this case you set `write = False`
+reflection _underneath_ the floor, in this case you set `write = False`
 when drawing the floor. The
 [crate example](https://github.com/elm-community/webgl/blob/master/examples/crate.elm)
 shows how to do it in Elm.
@@ -85,6 +90,7 @@ shows how to do it in Elm.
 For example, if you want to render GUI on top of the scene, you can
 set `near = 0.1, far = 1` for the scene and then render the GUI with
 `near = 0, far = 0.1`.
+
 -}
 type alias Options =
     { write : Bool

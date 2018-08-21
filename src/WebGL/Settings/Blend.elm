@@ -1,48 +1,56 @@
 module WebGL.Settings.Blend
     exposing
-        ( add
-        , subtract
-        , reverseSubtract
+        ( Blender
         , Factor
-        , zero
-        , one
-        , srcColor
-        , oneMinusSrcColor
-        , dstColor
-        , oneMinusDstColor
-        , srcAlpha
-        , oneMinusSrcAlpha
-        , dstAlpha
-        , oneMinusDstAlpha
-        , srcAlphaSaturate
-        , custom
-        , Blender
-        , customAdd
-        , customSubtract
-        , customReverseSubtract
-        , constantColor
-        , oneMinusConstantColor
+        , add
         , constantAlpha
+        , constantColor
+        , custom
+        , customAdd
+        , customReverseSubtract
+        , customSubtract
+        , dstAlpha
+        , dstColor
+        , one
         , oneMinusConstantAlpha
+        , oneMinusConstantColor
+        , oneMinusDstAlpha
+        , oneMinusDstColor
+        , oneMinusSrcAlpha
+        , oneMinusSrcColor
+        , reverseSubtract
+        , srcAlpha
+        , srcAlphaSaturate
+        , srcColor
+        , subtract
+        , zero
         )
 
 {-|
+
+
 # Blenders
+
 @docs add, subtract, reverseSubtract
 
+
 # Blend Factors
-@docs Factor, zero, one, srcColor, oneMinusSrcColor, dstColor,
-      oneMinusDstColor, srcAlpha, oneMinusSrcAlpha, dstAlpha,
-      oneMinusDstAlpha, srcAlphaSaturate
+
+@docs Factor, zero, one, srcColor, oneMinusSrcColor, dstColor
+@docs oneMinusDstColor, srcAlpha, oneMinusSrcAlpha, dstAlpha
+@docs oneMinusDstAlpha, srcAlphaSaturate
+
 
 # Custom Blenders
-@docs custom, Blender, customAdd, customSubtract, customReverseSubtract,
-      constantColor, oneMinusConstantColor, constantAlpha,
-      oneMinusConstantAlpha
+
+@docs custom, Blender, customAdd, customSubtract, customReverseSubtract
+@docs constantColor, oneMinusConstantColor, constantAlpha
+@docs oneMinusConstantAlpha
+
 -}
 
+import WebGL.Internal as I
 import WebGL.Settings exposing (Setting)
-import WebGL.Settings.Internal as I
 
 
 {-| Add the color of the current `Renderable` (the source color)
@@ -55,6 +63,7 @@ The resulting color will be `(src * 1) + (dest * 0)`, which means
 we do not use the destination color at all!
 You can get a feel for all the different blending factors
 [here](https://threejs.org/examples/webgl_materials_blending_custom.html).
+
 -}
 add : Factor -> Factor -> Setting
 add factor1 factor2 =
@@ -75,6 +84,7 @@ For example:
 
 This would do `(src * 1) - (dest * 1)` so you would take away colors
 based on the background.
+
 -}
 subtract : Factor -> Factor -> Setting
 subtract factor1 factor2 =
@@ -192,6 +202,7 @@ the alpha values separately:
             , color = customAdd one zero
             , alpha = customAdd one constantAlpha
             }
+
 -}
 custom :
     { r : Float
@@ -207,7 +218,7 @@ custom { r, g, b, a, color, alpha } =
         expand (Blender eq1 f11 f12) (Blender eq2 f21 f22) =
             I.Blend eq1 f11 f12 eq2 f21 f22 r g b a
     in
-        expand color alpha
+    expand color alpha
 
 
 {-| A `Blender` mixes the color of the current `Entity` (the source color)
@@ -245,6 +256,7 @@ Because of
 you cannot create a `Blender`, that has one factor set to
 `constantColor` or `oneMinusConstantColor` and another set to
 `constantAlpha` or `oneMinusConstantAlpha`.
+
 -}
 constantColor : Factor
 constantColor =

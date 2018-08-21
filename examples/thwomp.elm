@@ -1,25 +1,27 @@
-module Main exposing (main)
+module Thwomp exposing (main)
 
 {-
    Thanks to The PaperNES Guy for the texture:
    http://the-papernes-guy.deviantart.com/art/Thwomps-Thwomps-Thwomps-186879685
 -}
 
+import Browser
+import Browser.Dom exposing (getViewport, Viewport)
+import Browser.Events exposing (onMouseMove, onResize)
 import Html exposing (Html, text)
-import Html.Attributes exposing (width, height, style)
+import Html.Attributes exposing (height, style, width)
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector2 as Vec2 exposing (Vec2, vec2)
 import Math.Vector3 as Vec3 exposing (Vec3, vec3)
-import Mouse
 import Task exposing (Task)
 import WebGL exposing (Mesh, Shader, Entity)
 import WebGL.Texture as Texture exposing (Texture, defaultOptions, Error)
-import Window
+import Json.Decode as Decode exposing (Decoder, Value)
 
 
 type alias Model =
-    { size : Window.Size
-    , position : Mouse.Position
+    { size : { width : Float, height : Float }
+    , position : { x : Float, y : Float }
     , textures : Maybe ( Texture, Texture )
     }
 
@@ -27,14 +29,15 @@ type alias Model =
 type Action
     = TexturesError Error
     | TexturesLoaded ( Texture, Texture )
-    | Resize Window.Size
-    | MouseMove Mouse.Position
+    | GetViewport Viewport
+    | Resize Int Int
+    | MouseMove { x : Float, y : Float }
 
 
-main : Program Never Model Action
+main : Program Value Model Action
 main =
-    Html.program
-        { init = init
+    Browser.element
+        { init = \_ -> init
         , view = view
         , subscriptions = subscriptions
         , update = update
@@ -43,12 +46,12 @@ main =
 
 init : ( Model, Cmd Action )
 init =
-    ( { size = Window.Size 0 0
-      , position = Mouse.Position 0 0
+    ( { size = { width = 0, height = 0 }
+      , position = { x = 0, y = 0 }
       , textures = Nothing
       }
     , Cmd.batch
-        [ Task.perform Resize Window.size
+        [ Task.perform GetViewport getViewport
         , fetchTextures
         ]
     )
@@ -57,9 +60,16 @@ init =
 subscriptions : Model -> Sub Action
 subscriptions _ =
     Sub.batch
-        [ Window.resizes Resize
-        , Mouse.moves MouseMove
+        [ onResize Resize
+        , onMouseMove mousePosition
         ]
+
+
+mousePosition : Decoder Action
+mousePosition =
+    Decode.map2 (\x y -> MouseMove { x = x, y = y })
+        (Decode.field "pageX" Decode.float)
+        (Decode.field "pageY" Decode.float)
 
 
 update : Action -> Model -> ( Model, Cmd Action )
@@ -71,8 +81,11 @@ update action model =
         TexturesLoaded textures ->
             ( { model | textures = Just textures }, Cmd.none )
 
-        Resize size ->
-            ( { model | size = size }, Cmd.none )
+        GetViewport { viewport } ->
+            ( { model | size = { width = viewport.width, height = viewport.height } }, Cmd.none )
+
+        Resize width height ->
+            ( { model | size = { width = toFloat width, height = toFloat height } }, Cmd.none )
 
         MouseMove position ->
             ( { model | position = position }, Cmd.none )
@@ -182,9 +195,12 @@ view { textures, size, position } =
     case textures of
         Just ( faceTexture, sideTexture ) ->
             WebGL.toHtml
-                [ width size.width
-                , height size.height
-                , style [ ( "display", "block" ) ]
+                [ width (round size.width)
+                , height (round size.height)
+                , style "display" "block"
+                , style "position" "absolute"
+                , style "left" "0"
+                , style "top" "0"
                 ]
                 [ toEntity faceMesh faceTexture size position
                 , toEntity sidesMesh sideTexture size position
@@ -194,19 +210,14 @@ view { textures, size, position } =
             text "Loading textures..."
 
 
-toEntity : Mesh Vertex -> Texture -> Window.Size -> Mouse.Position -> Entity
+toEntity : Mesh Vertex -> Texture -> { width : Float, height : Float } -> { x : Float, y : Float } -> Entity
 toEntity mesh texture { width, height } { x, y } =
     WebGL.entity
         vertexShader
         fragmentShader
         mesh
         { texture = texture
-        , perspective =
-            perspective
-                (toFloat width)
-                (toFloat height)
-                (toFloat x)
-                (toFloat y)
+        , perspective = perspective width height x y
         }
 
 

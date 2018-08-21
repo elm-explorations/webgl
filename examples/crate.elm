@@ -1,23 +1,24 @@
-module Main exposing (main)
+module Crate exposing (main)
 
 {-
    This example was inspired by https://open.gl/depthstencils
    It demonstrates how to use the stencil buffer.
 -}
 
-import AnimationFrame
+import Browser
+import Browser.Events exposing (onAnimationFrameDelta)
 import Html exposing (Html)
-import Html.Attributes exposing (width, height, style)
+import Html.Attributes exposing (height, style, width)
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector2 as Vec2 exposing (Vec2, vec2)
 import Math.Vector3 as Vec3 exposing (Vec3, vec3)
 import Task
-import Time exposing (Time)
 import WebGL exposing (Mesh, Shader, Entity)
 import WebGL.Settings.Blend as Blend
 import WebGL.Settings.DepthTest as DepthTest
 import WebGL.Settings.StencilTest as StencilTest
 import WebGL.Texture as Texture exposing (Error, Texture)
+import Json.Decode exposing (Value)
 
 
 type alias Model =
@@ -28,7 +29,7 @@ type alias Model =
 
 type Msg
     = TextureLoaded (Result Error Texture)
-    | Animate Time
+    | Animate Float
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -48,12 +49,12 @@ init =
     )
 
 
-main : Program Never Model Msg
+main : Program Value Model Msg
 main =
-    Html.program
-        { init = init
+    Browser.element
+        { init = \_ -> init
         , view = view
-        , subscriptions = (\model -> AnimationFrame.diffs Animate)
+        , subscriptions = (\model -> onAnimationFrameDelta Animate)
         , update = update
         }
 
@@ -72,7 +73,7 @@ view { texture, theta } =
         ]
         [ width 400
         , height 400
-        , style [ ( "display", "block" ) ]
+        , style "display" "block"
         ]
         (texture
             |> Maybe.map (scene (perspective theta))
