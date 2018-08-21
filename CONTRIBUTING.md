@@ -1,6 +1,6 @@
 # Contributing to elm-explorations/webgl
 
-This repository is kept for maintenance and does not accept most feature requests. In particular, [#6](https://github.com/elm-community/elm-webgl/issues/6) requires that all
+This repository is kept for maintenance and does not accept most feature requests. In particular, [this](https://github.com/elm/package.elm-lang.org/issues/149#issuecomment-171068020) requires that all
 changes be PATCH-level, meaning that the API cannot be modified.
 
 Any contribution should:
