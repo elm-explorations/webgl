@@ -24,8 +24,8 @@ module WebGL
         )
 
 {-| The WebGL API is for high performance rendering. Definitely read about
-[how WebGL works](http://package.elm-lang.org/packages/elm-community/webgl/latest)
-and look at [some examples](https://github.com/elm-community/webgl/tree/master/examples)
+[how WebGL works](https://package.elm-lang.org/packages/elm-explorations/webgl/latest)
+and look at [some examples](https://github.com/elm-explorations/webgl/tree/master/examples)
 before trying to do too much with just the documentation provided here.
 
 
@@ -79,10 +79,10 @@ bunch of attributes, defined as a custom record type, e.g.:
 
 The supported types in attributes are: `Int`, `Float`, `Texture`
 and `Vec2`, `Vec3`, `Vec4`, `Mat4` from the
-[linear-algebra](http://package.elm-lang.org/packages/elm-community/linear-algebra/latest)
+[linear-algebra](https://package.elm-lang.org/packages/elm-explorations/linear-algebra/latest)
 package.
 
-Do not generate meshes in `view`, [read more about this here](http://package.elm-lang.org/packages/elm-community/webgl/latest#making-the-most-of-the-gpu).
+Do not generate meshes in `view`, [read more about this here](https://package.elm-lang.org/packages/elm-explorations/webgl/latest#making-the-most-of-the-gpu).
 
 -}
 type Mesh attributes
@@ -185,8 +185,8 @@ points =
 
 {-| Shaders are programs for running many computations on the GPU in parallel.
 They are written in a language called
-[GLSL](http://en.wikipedia.org/wiki/OpenGL_Shading_Language). Read more about
-shaders [here](https://github.com/elm-community/webgl/blob/master/README.md).
+[GLSL](https://en.wikipedia.org/wiki/OpenGL_Shading_Language). Read more about
+shaders [here](https://github.com/elm-explorations/webgl/blob/master/README.md).
 
 Normally you specify a shader with a `[glsl| |]` block. Elm compiler will parse
 the shader code block and derive the type signature for your shader.
@@ -199,7 +199,7 @@ the shader code block and derive the type signature for your shader.
 `attributes`, `uniforms` and `varyings` are records with the fields of the
 following types: `Int`, `Float`, [`Texture`](#Texture) and `Vec2`, `Vec3`, `Vec4`,
 `Mat4` from the
-[linear-algebra](http://package.elm-lang.org/packages/elm-community/linear-algebra/latest)
+[linear-algebra](https://package.elm-lang.org/packages/elm-explorations/linear-algebra/latest)
 package.
 
 -}
@@ -216,7 +216,7 @@ type Entity
 {-| Packages a vertex shader, a fragment shader, a mesh, and uniforms
 as an `Entity`. This specifies a full rendering pipeline to be run
 on the GPU. You can read more about the pipeline
-[here](https://github.com/elm-community/webgl/blob/master/README.md).
+[here](https://github.com/elm-explorations/webgl/blob/master/README.md).
 
 The vertex shader receives `attributes` and `uniforms` and returns `varyings`
 and `gl_Position`—the position of the vertex on the screen, defined as

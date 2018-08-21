@@ -95,7 +95,7 @@ Crop the reflection `Entity` using the values from the stencil buffer:
         }
 
 You can see the complete example
-[here](https://github.com/elm-community/webgl/blob/master/examples/crate.elm).
+[here](https://github.com/elm-explorations/webgl/blob/master/examples/crate.elm).
 
 -}
 test :
@@ -268,6 +268,6 @@ testSeparate { ref, mask, writeMask } options1 options2 =
                 >> expandOp options.zfail
                 >> expandOp options.zpass
     in
-    I.StencilTest ref mask writeMask
-        |> expand options1
-        |> expand options2
+        I.StencilTest ref mask writeMask
+            |> expand options1
+            |> expand options2

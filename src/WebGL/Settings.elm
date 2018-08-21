@@ -71,7 +71,7 @@ colorMask =
 object, the lines may fade in and out of the coincident polygons,
 which is sometimes called "stitching" and is visually unpleasant.
 
-[Polygon Offset](http://www.glprogramming.com/red/chapter06.html#name4)
+[Polygon Offset](https://www.glprogramming.com/red/chapter06.html#name4)
 helps to avoid "stitching" by adding an offset to pixel’s depth
 values before the depth test is performed and before the value is written
 into the depth buffer.
@@ -108,7 +108,7 @@ polygonOffset =
 {-| When you render overlapping transparent entities, like grass or hair, you
 may notice that alpha blending doesn’t really work with depth testing, because
 depth test ignores transparency.
-[Alpha To Coverage](http://wiki.polycount.com/wiki/Transparency_map#Alpha_To_Coverage)
+[Alpha To Coverage](https://wiki.polycount.com/wiki/Transparency_map#Alpha_To_Coverage)
 is a way to address this issue without sorting transparent entities.
 
 It works by computing a temporary coverage value, where each bit is determined

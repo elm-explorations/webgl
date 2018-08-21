@@ -620,7 +620,7 @@ function _WebGL_render(model) {
     });
   } else {
     canvas = __VirtualDom_doc.createElement('div');
-    canvas.innerHTML = '<a href="http://get.webgl.org/">Enable WebGL</a> to see this content!';
+    canvas.innerHTML = '<a href="https://get.webgl.org/">Enable WebGL</a> to see this content!';
   }
 
   model.__cache.gl = gl;
