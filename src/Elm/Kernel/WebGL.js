@@ -446,13 +446,13 @@ var _WebGL_drawGL = F2(function (model, domNode) {
     }
 
     _WebGL_listEach(function (setting) {
-      A2(__WI_enableSetting, gl, setting);
+      return A2(__WI_enableSetting, gl, setting);
     }, entity.__settings);
 
     gl.drawElements(entity.__mesh.a.__$mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
 
     _WebGL_listEach(function (setting) {
-      A2(__WI_disableSetting, gl, setting);
+      return A2(__WI_disableSetting, gl, setting);
     }, entity.__settings);
 
   }
@@ -604,7 +604,7 @@ function _WebGL_render(model) {
   };
 
   _WebGL_listEach(function (option) {
-    A2(__WI_enableOption, options, option);
+    return A2(__WI_enableOption, options, option);
   }, model.__options);
 
   _WebGL_log('Render canvas');
@@ -633,7 +633,7 @@ function _WebGL_render(model) {
   // This has to be done in animation frame,
   // because the canvas is not in the DOM yet
   _WebGL_rAF(function () {
-    A2(_WebGL_drawGL, model, canvas);
+    return A2(_WebGL_drawGL, model, canvas);
   });
 
   return canvas;
