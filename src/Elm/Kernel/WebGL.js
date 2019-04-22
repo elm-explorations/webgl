@@ -608,27 +608,28 @@ function _WebGL_render(model) {
     canvas.getContext('experimental-webgl', options.contextAttributes)
   );
 
-  if (gl) {
+  if (gl && typeof WeakMap !== 'undefined') {
     options.sceneSettings.forEach(function (sceneSetting) {
       sceneSetting(gl);
     });
+
+    model.__cache.gl = gl;
+    model.__cache.shaders = [];
+    model.__cache.programs = {};
+    model.__cache.buffers = new WeakMap();
+    model.__cache.textures = new WeakMap();
+
+    // Render for the first time.
+    // This has to be done in animation frame,
+    // because the canvas is not in the DOM yet
+    _WebGL_rAF(function () {
+      return A2(_WebGL_drawGL, model, canvas);
+    });
+
   } else {
     canvas = __VirtualDom_doc.createElement('div');
     canvas.innerHTML = '<a href="https://get.webgl.org/">Enable WebGL</a> to see this content!';
   }
-
-  model.__cache.gl = gl;
-  model.__cache.shaders = [];
-  model.__cache.programs = {};
-  model.__cache.buffers = new WeakMap();
-  model.__cache.textures = new WeakMap();
-
-  // Render for the first time.
-  // This has to be done in animation frame,
-  // because the canvas is not in the DOM yet
-  _WebGL_rAF(function () {
-    return A2(_WebGL_drawGL, model, canvas);
-  });
 
   return canvas;
 }
