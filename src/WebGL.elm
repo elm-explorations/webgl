@@ -1,27 +1,13 @@
-module WebGL
-    exposing
-        ( Entity
-        , Mesh
-        , Option
-        , Shader
-        , alpha
-        , antialias
-        , clearColor
-        , depth
-        , entity
-        , entityWith
-        , indexedTriangles
-        , lineLoop
-        , lineStrip
-        , lines
-        , points
-        , stencil
-        , toHtml
-        , toHtmlWith
-        , triangleFan
-        , triangleStrip
-        , triangles
-        )
+module WebGL exposing
+    ( Mesh, triangles
+    , Shader
+    , Entity, entity
+    , toHtml
+    , entityWith, toHtmlWith, Option, alpha, depth, stencil, antialias
+    , clearColor, preserveDrawingBuffer
+    , indexedTriangles, lines, lineStrip, lineLoop, points, triangleFan
+    , triangleStrip
+    )
 
 {-| The WebGL API is for high performance rendering. Definitely read about
 [how WebGL works](https://package.elm-lang.org/packages/elm-explorations/webgl/latest)
@@ -52,7 +38,7 @@ before trying to do too much with just the documentation provided here.
 # Advanced Usage
 
 @docs entityWith, toHtmlWith, Option, alpha, depth, stencil, antialias
-@docs clearColor
+@docs clearColor, preserveDrawingBuffer
 
 
 # Meshes
@@ -136,6 +122,8 @@ edge.
     --    | \ |
     --    |  \|
     -- v3 +---+ v0
+
+
 
 For example, if you want to define a rectangle using
 [`triangles`](#triangles), `v0` and `v2` will have to be duplicated:
@@ -234,6 +222,8 @@ and `gl_Position`—the position of the vertex on the screen, defined as
     --         |/               |/
     --         +================+
     --   (-1,-1,-1)         (1,-1,-1)
+
+
 
 The fragment shader is called for each pixel inside the clip space with
 `varyings` and `uniforms` and returns `gl_FragColor`—the color of
@@ -360,3 +350,16 @@ clamped between 0 and 1. The default is all 0's.
 clearColor : Float -> Float -> Float -> Float -> Option
 clearColor =
     I.ClearColor
+
+
+{-| By default, WebGL canvas swaps the drawing and display buffers.
+This option forces it to copy the drawing buffer into the display buffer.
+
+Even though this slows down the rendering, it allows you to extract an image
+from the canvas element using `canvas.toBlob()` in JavaScript without having
+to worry about synchronization between frames.
+
+-}
+preserveDrawingBuffer : Option
+preserveDrawingBuffer =
+    I.PreserveDrawingBuffer

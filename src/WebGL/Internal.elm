@@ -1,11 +1,10 @@
-module WebGL.Internal
-    exposing
-        ( Option(..)
-        , Setting(..)
-        , disableSetting
-        , enableOption
-        , enableSetting
-        )
+module WebGL.Internal exposing
+    ( Option(..)
+    , Setting(..)
+    , disableSetting
+    , enableOption
+    , enableSetting
+    )
 
 import Elm.Kernel.WebGL
 
@@ -16,6 +15,7 @@ type Option
     | Stencil Int
     | Antialias
     | ClearColor Float Float Float Float
+    | PreserveDrawingBuffer
 
 
 enableOption : () -> Option -> ()
@@ -35,6 +35,9 @@ enableOption ctx option =
 
         ClearColor _ _ _ _ ->
             Elm.Kernel.WebGL.enableClearColor ctx option
+
+        PreserveDrawingBuffer ->
+            Elm.Kernel.WebGL.enablePreserveDrawingBuffer ctx option
 
 
 type Setting

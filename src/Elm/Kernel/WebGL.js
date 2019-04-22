@@ -576,6 +576,11 @@ var _WebGL_enableClearColor = F2(function (options, option) {
   });
 });
 
+// eslint-disable-next-line no-unused-vars
+var _WebGL_enablePreserveDrawingBuffer = F2(function (options, option) {
+  options.contextAttributes.preserveDrawingBuffer = true;
+});
+
 /**
  *  Creates canvas and schedules initial _WebGL_drawGL
  *  @param {Object} model
@@ -592,7 +597,8 @@ function _WebGL_render(model) {
       depth: false,
       stencil: false,
       antialias: false,
-      premultipliedAlpha: false
+      premultipliedAlpha: false,
+      preserveDrawingBuffer: false
     },
     sceneSettings: []
   };
