@@ -418,11 +418,11 @@ var _WebGL_drawGL = F2(function (model, domNode) {
 
     _WebGL_setUniforms(program.uniformSetters, entity.__uniforms);
 
-    var buffer = model.__cache.buffers[entity.__mesh.id];
+    var buffer = model.__cache.buffers.get(entity.__mesh);
 
     if (!buffer) {
       buffer = _WebGL_doBindSetup(gl, entity.__mesh);
-      model.__cache.buffers[entity.__mesh.id] = buffer;
+      model.__cache.buffers.set(entity.__mesh, buffer);
     }
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indexBuffer);
@@ -494,11 +494,11 @@ function _WebGL_createUniformSetters(gl, model, program, uniformsMap) {
         var currentTexture = textureCounter++;
         return function (texture) {
           gl.activeTexture(gl.TEXTURE0 + currentTexture);
-          var tex = model.__cache.textures[texture.id];
+          var tex = model.__cache.textures.get(texture);
           if (!tex) {
             _WebGL_log('Created texture');
             tex = texture.__$createTexture(gl);
-            model.__cache.textures[texture.id] = tex;
+            model.__cache.textures.set(texture, tex);
           }
           gl.bindTexture(gl.TEXTURE_2D, tex);
           gl.uniform1i(uniformLocation, currentTexture);
@@ -509,7 +509,7 @@ function _WebGL_createUniformSetters(gl, model, program, uniformsMap) {
         };
       default:
         _WebGL_log('Unsupported uniform type: ' + uniform.type);
-        return function () {};
+        return function () { };
     }
   }
 
@@ -626,8 +626,8 @@ function _WebGL_render(model) {
   model.__cache.gl = gl;
   model.__cache.shaders = [];
   model.__cache.programs = {};
-  model.__cache.buffers = [];
-  model.__cache.textures = [];
+  model.__cache.buffers = new WeakMap();
+  model.__cache.textures = new WeakMap();
 
   // Render for the first time.
   // This has to be done in animation frame,
