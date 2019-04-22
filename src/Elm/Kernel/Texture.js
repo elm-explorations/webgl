@@ -6,8 +6,6 @@ import WebGL.Texture as Texture exposing (LoadError, SizeError)
 
 */
 
-var _Texture_guid = 0;
-
 // eslint-disable-next-line no-unused-vars
 var _Texture_load = F6(function (magnify, mininify, horizontalWrap, verticalWrap, flipY, url) {
   var isMipmap = mininify !== 9728 && mininify !== 9729;
@@ -41,7 +39,6 @@ var _Texture_load = F6(function (magnify, mininify, horizontalWrap, verticalWrap
       if (isSizeValid) {
         callback(__Scheduler_succeed({
           $: __0_TEXTURE,
-          id: _Texture_guid++,
           __$createTexture: createTexture,
           __width: width,
           __height: height

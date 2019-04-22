@@ -31,11 +31,6 @@ var _WebGL_rAF = typeof requestAnimationFrame !== 'undefined' ?
 
 // eslint-disable-next-line no-unused-vars
 var _WebGL_entity = F5(function (settings, vert, frag, mesh, uniforms) {
-
-  if (!mesh.id) {
-    mesh.id = _WebGL_guid++;
-  }
-
   return {
     $: __0_ENTITY,
     __settings: settings,
@@ -44,7 +39,6 @@ var _WebGL_entity = F5(function (settings, vert, frag, mesh, uniforms) {
     __mesh: mesh,
     __uniforms: uniforms
   };
-
 });
 
 // eslint-disable-next-line no-unused-vars
