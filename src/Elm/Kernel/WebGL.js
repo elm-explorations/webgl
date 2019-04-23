@@ -187,21 +187,17 @@ function _WebGL_doLink(gl, vshader, fshader) {
 function _WebGL_getAttributeInfo(gl, type) {
   switch (type) {
     case gl.FLOAT:
-      return { size: 1, type: Float32Array, baseType: gl.FLOAT };
+      return { size: 1, arraySize: 1, type: Float32Array, baseType: gl.FLOAT };
     case gl.FLOAT_VEC2:
-      return { size: 2, type: Float32Array, baseType: gl.FLOAT };
+      return { size: 2, arraySize: 1, type: Float32Array, baseType: gl.FLOAT };
     case gl.FLOAT_VEC3:
-      return { size: 3, type: Float32Array, baseType: gl.FLOAT };
+      return { size: 3, arraySize: 1, type: Float32Array, baseType: gl.FLOAT };
     case gl.FLOAT_VEC4:
-      return { size: 4, type: Float32Array, baseType: gl.FLOAT };
+      return { size: 4, arraySize: 1, type: Float32Array, baseType: gl.FLOAT };
+    case gl.FLOAT_MAT4:
+      return { size: 4, arraySize: 4, type: Float32Array, baseType: gl.FLOAT };
     case gl.INT:
-      return { size: 1, type: Int32Array, baseType: gl.INT };
-    case gl.INT_VEC2:
-      return { size: 2, type: Int32Array, baseType: gl.INT };
-    case gl.INT_VEC3:
-      return { size: 3, type: Int32Array, baseType: gl.INT };
-    case gl.INT_VEC4:
-      return { size: 4, type: Int32Array, baseType: gl.INT };
+      return { size: 1, arraySize: 1, type: Int32Array, baseType: gl.INT };
   }
 }
 
@@ -249,11 +245,12 @@ function _WebGL_doBindAttribute(gl, attribute, mesh, attributes) {
   }
 
   var dataIdx = 0;
-  var array = new attributeInfo.type(_WebGL_listLength(mesh.b) * attributeInfo.size * elemSize);
+  var dataOffset = attributeInfo.size * attributeInfo.arraySize * elemSize;
+  var array = new attributeInfo.type(_WebGL_listLength(mesh.b) * dataOffset);
 
   _WebGL_listEach(function (elem) {
-    dataFill(array, attributeInfo.size, dataIdx, elem, attributes[attribute.name] || attribute.name);
-    dataIdx += attributeInfo.size * elemSize;
+    dataFill(array, attributeInfo.size * attributeInfo.arraySize, dataIdx, elem, attributes[attribute.name] || attribute.name);
+    dataIdx += dataOffset;
   }, mesh.b);
 
   var buffer = gl.createBuffer();
@@ -436,9 +433,19 @@ var _WebGL_drawGL = F2(function (model, domNode) {
       var attributeInfo = _WebGL_getAttributeInfo(gl, attribute.type);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, attributeBuffer);
-      gl.vertexAttribPointer(attribLocation, attributeInfo.size, attributeInfo.baseType, false, 0, 0);
-    }
 
+      if (attributeInfo.arraySize === 1) {
+        gl.vertexAttribPointer(attribLocation, attributeInfo.size, attributeInfo.baseType, false, 0, 0);
+      } else {
+        // Point to four vec4 in case of mat4
+        var offset = attributeInfo.size * 4; // float32 takes 4 bytes
+        var stride = offset * attributeInfo.arraySize;
+        for (var m = 0; m < attributeInfo.arraySize; m++) {
+          gl.enableVertexAttribArray(attribLocation + m);
+          gl.vertexAttribPointer(attribLocation + m, attributeInfo.size, attributeInfo.baseType, false, stride, offset * m);
+        }
+      }
+    }
     _WebGL_listEach(function (setting) {
       return A2(__WI_enableSetting, gl, setting);
     }, entity.__settings);
