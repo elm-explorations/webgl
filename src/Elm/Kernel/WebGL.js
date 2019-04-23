@@ -434,14 +434,16 @@ var _WebGL_drawGL = F2(function (model, domNode) {
 
       gl.bindBuffer(gl.ARRAY_BUFFER, attributeBuffer);
 
-      if (attributeInfo.arraySize > 1) {
+      if (attributeInfo.arraySize === 1) {
+        gl.vertexAttribPointer(attribLocation, attributeInfo.size, attributeInfo.baseType, false, 0, 0);
+      } else {
         // Point to four vec4 in case of mat4
+        var offset = attributeInfo.size * 4; // float32 takes 4 bytes
+        var stride = offset * attributeInfo.arraySize;
         for (var m = 0; m < attributeInfo.arraySize; m++) {
           gl.enableVertexAttribArray(attribLocation + m);
-          gl.vertexAttribPointer(attribLocation + m, attributeInfo.size, attributeInfo.baseType, false, 64, 16 * m);
+          gl.vertexAttribPointer(attribLocation + m, attributeInfo.size, attributeInfo.baseType, false, stride, offset * m);
         }
-      } else {
-        gl.vertexAttribPointer(attribLocation, attributeInfo.size, attributeInfo.baseType, false, 0, 0);
       }
     }
     _WebGL_listEach(function (setting) {
