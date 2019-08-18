@@ -275,38 +275,28 @@ function _WebGL_doBindAttribute(gl, attribute, mesh, attributes) {
  *  @param {Mesh} mesh a mesh object from Elm
  *  @return {Object} buffer - an object with the following properties
  *  @return {Number} buffer.numIndices
- *  @return {WebGLBuffer} buffer.indexBuffer
+ *  @return {WebGLBuffer|null} buffer.indexBuffer - optional index buffer
  *  @return {Object} buffer.buffers - will be used to buffer attributes
  */
 function _WebGL_doBindSetup(gl, mesh) {
-  _WebGL_log('Created index buffer');
-  var indexBuffer = gl.createBuffer();
-  var indices = (mesh.a.__$indexSize === 0)
-    ? _WebGL_makeSequentialBuffer(mesh.a.__$elemSize * _WebGL_listLength(mesh.b))
-    : _WebGL_makeIndexedBuffer(mesh.c, mesh.a.__$indexSize);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-
-  return {
-    numIndices: indices.length,
-    indexBuffer: indexBuffer,
-    buffers: {}
-  };
-}
-
-/**
- *  Create an indices array and fill it with 0..n
- *
- *  @param {Number} numIndices The number of indices
- *  @return {Uint16Array} indices
- */
-function _WebGL_makeSequentialBuffer(numIndices) {
-  var indices = new Uint16Array(numIndices);
-  for (var i = 0; i < numIndices; i++) {
-    indices[i] = i;
+  if (mesh.a.indexSize > 0) {
+    _WebGL_log('Created index buffer');
+    var indexBuffer = gl.createBuffer();
+    var indices = _WebGL_makeIndexedBuffer(mesh.c, mesh.a.indexSize);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+    return {
+      numIndices: indices.length,
+      indexBuffer: indexBuffer,
+      buffers: {}
+    };
+  } else {
+    return {
+      numIndices: mesh.a.elemSize * _WebGL_listLength(mesh.b),
+      indexBuffer: null,
+      buffers: {}
+    };
   }
-  return indices;
 }
 
 /**
@@ -416,8 +406,6 @@ var _WebGL_drawGL = F2(function (model, domNode) {
       model.__cache.buffers.set(entity.__mesh, buffer);
     }
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indexBuffer);
-
     var numAttributes = gl.getProgramParameter(program.glProgram, gl.ACTIVE_ATTRIBUTES);
 
     for (var i = 0; i < numAttributes; i++) {
@@ -450,7 +438,12 @@ var _WebGL_drawGL = F2(function (model, domNode) {
       return A2(__WI_enableSetting, gl, setting);
     }, entity.__settings);
 
-    gl.drawElements(entity.__mesh.a.__$mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
+    if (buffer.indexBuffer) {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indexBuffer);
+      gl.drawElements(entity.d.a.mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
+    } else {
+      gl.drawArrays(entity.d.a.mode, 0, buffer.numIndices);
+    }
 
     _WebGL_listEach(function (setting) {
       return A2(__WI_disableSetting, gl, setting);
