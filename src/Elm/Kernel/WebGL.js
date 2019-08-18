@@ -116,6 +116,7 @@ var _WebGL_disableBlend = function (gl) {
 // eslint-disable-next-line no-unused-vars
 var _WebGL_disableDepthTest = function (gl) {
   gl.disable(gl.DEPTH_TEST);
+  gl.depthMask(true);
 };
 
 // eslint-disable-next-line no-unused-vars
