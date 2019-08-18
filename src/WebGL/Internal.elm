@@ -84,31 +84,31 @@ enableSetting gl setting =
 
 
 disableSetting : () -> Setting -> ()
-disableSetting gl setting =
+disableSetting cache setting =
     case setting of
         Blend _ _ _ _ _ _ _ _ _ _ ->
-            Elm.Kernel.WebGL.disableBlend gl
+            Elm.Kernel.WebGL.disableBlend cache
 
         DepthTest _ _ _ _ ->
-            Elm.Kernel.WebGL.disableDepthTest gl
+            Elm.Kernel.WebGL.disableDepthTest cache
 
         StencilTest _ _ _ _ _ _ _ _ _ _ _ ->
-            Elm.Kernel.WebGL.disableStencilTest gl
+            Elm.Kernel.WebGL.disableStencilTest cache
 
         Scissor _ _ _ _ ->
-            Elm.Kernel.WebGL.disableScissor gl
+            Elm.Kernel.WebGL.disableScissor cache
 
         ColorMask _ _ _ _ ->
-            Elm.Kernel.WebGL.disableColorMask gl
+            Elm.Kernel.WebGL.disableColorMask cache
 
         CullFace _ ->
-            Elm.Kernel.WebGL.disableCullFace gl
+            Elm.Kernel.WebGL.disableCullFace cache
 
         PolygonOffset _ _ ->
-            Elm.Kernel.WebGL.disablePolygonOffset gl
+            Elm.Kernel.WebGL.disablePolygonOffset cache
 
         SampleCoverage _ _ ->
-            Elm.Kernel.WebGL.disableSampleCoverage gl
+            Elm.Kernel.WebGL.disableSampleCoverage cache
 
         SampleAlphaToCoverage ->
-            Elm.Kernel.WebGL.disableSampleAlphaToCoverage gl
+            Elm.Kernel.WebGL.disableSampleAlphaToCoverage cache
