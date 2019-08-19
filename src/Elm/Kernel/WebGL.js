@@ -109,48 +109,50 @@ var _WebGL_enableSampleAlphaToCoverage = F2(function (gl, setting) {
 });
 
 // eslint-disable-next-line no-unused-vars
-var _WebGL_disableBlend = function (gl) {
-  gl.disable(gl.BLEND);
+var _WebGL_disableBlend = function (cache) {
+  cache.gl.disable(cache.gl.BLEND);
 };
 
 // eslint-disable-next-line no-unused-vars
-var _WebGL_disableDepthTest = function (gl) {
-  gl.disable(gl.DEPTH_TEST);
+var _WebGL_disableDepthTest = function (cache) {
+  cache.gl.disable(cache.gl.DEPTH_TEST);
+  cache.gl.depthMask(true);
 };
 
 // eslint-disable-next-line no-unused-vars
-var _WebGL_disableStencilTest = function (gl) {
-  gl.disable(gl.STENCIL_TEST);
+var _WebGL_disableStencilTest = function (cache) {
+  cache.gl.disable(cache.gl.STENCIL_TEST);
+  cache.gl.stencilMask(cache.STENCIL_WRITEMASK);
 };
 
 // eslint-disable-next-line no-unused-vars
-var _WebGL_disableScissor = function (gl) {
-  gl.disable(gl.SCISSOR_TEST);
+var _WebGL_disableScissor = function (cache) {
+  cache.gl.disable(cache.gl.SCISSOR_TEST);
 };
 
 // eslint-disable-next-line no-unused-vars
-var _WebGL_disableColorMask = function (gl) {
-  gl.colorMask(true, true, true, true);
+var _WebGL_disableColorMask = function (cache) {
+  cache.gl.colorMask(true, true, true, true);
 };
 
 // eslint-disable-next-line no-unused-vars
-var _WebGL_disableCullFace = function (gl) {
-  gl.disable(gl.CULL_FACE);
+var _WebGL_disableCullFace = function (cache) {
+  cache.gl.disable(cache.gl.CULL_FACE);
 };
 
 // eslint-disable-next-line no-unused-vars
-var _WebGL_disablePolygonOffset = function (gl) {
-  gl.disable(gl.POLYGON_OFFSET_FILL);
+var _WebGL_disablePolygonOffset = function (cache) {
+  cache.gl.disable(cache.gl.POLYGON_OFFSET_FILL);
 };
 
 // eslint-disable-next-line no-unused-vars
-var _WebGL_disableSampleCoverage = function (gl) {
-  gl.disable(gl.SAMPLE_COVERAGE);
+var _WebGL_disableSampleCoverage = function (cache) {
+  cache.gl.disable(cache.gl.SAMPLE_COVERAGE);
 };
 
 // eslint-disable-next-line no-unused-vars
-var _WebGL_disableSampleAlphaToCoverage = function (gl) {
-  gl.disable(gl.SAMPLE_ALPHA_TO_COVERAGE);
+var _WebGL_disableSampleAlphaToCoverage = function (cache) {
+  cache.gl.disable(cache.gl.SAMPLE_ALPHA_TO_COVERAGE);
 };
 
 function _WebGL_doCompile(gl, src, type) {
@@ -446,15 +448,11 @@ var _WebGL_drawGL = F2(function (model, domNode) {
         }
       }
     }
-    _WebGL_listEach(function (setting) {
-      return A2(__WI_enableSetting, gl, setting);
-    }, entity.__settings);
+    _WebGL_listEach(__WI_enableSetting(gl), entity.__settings);
 
     gl.drawElements(entity.__mesh.a.__$mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
 
-    _WebGL_listEach(function (setting) {
-      return A2(__WI_disableSetting, gl, setting);
-    }, entity.__settings);
+    _WebGL_listEach(__WI_disableSetting(model.__cache), entity.__settings);
 
   }
 
@@ -631,6 +629,9 @@ function _WebGL_render(model) {
     model.__cache.programs = {};
     model.__cache.buffers = new WeakMap();
     model.__cache.textures = new WeakMap();
+    // Memorize the initial stencil write mask, because
+    // browsers may have different number of stencil bits
+    model.__cache.STENCIL_WRITEMASK = gl.getParameter(gl.STENCIL_WRITEMASK);
 
     // Render for the first time.
     // This has to be done in animation frame,
