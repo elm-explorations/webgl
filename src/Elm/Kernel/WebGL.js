@@ -281,10 +281,10 @@ function _WebGL_doBindAttribute(gl, attribute, mesh, attributes) {
  *  @return {Object} buffer.buffers - will be used to buffer attributes
  */
 function _WebGL_doBindSetup(gl, mesh) {
-  if (mesh.a.indexSize > 0) {
+  if (mesh.a.__$indexSize > 0) {
     _WebGL_log('Created index buffer');
     var indexBuffer = gl.createBuffer();
-    var indices = _WebGL_makeIndexedBuffer(mesh.c, mesh.a.indexSize);
+    var indices = _WebGL_makeIndexedBuffer(mesh.c, mesh.a.__$indexSize);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
     return {
@@ -294,7 +294,7 @@ function _WebGL_doBindSetup(gl, mesh) {
     };
   } else {
     return {
-      numIndices: mesh.a.elemSize * _WebGL_listLength(mesh.b),
+      numIndices: mesh.a.__$elemSize * _WebGL_listLength(mesh.b),
       indexBuffer: null,
       buffers: {}
     };
@@ -383,12 +383,12 @@ var _WebGL_drawGL = F2(function (model, domNode) {
 
       program = {
         glProgram: glProgram,
-        attributes: Object.assign({}, entity.b.attributes, entity.c.attributes),
+        attributes: Object.assign({}, entity.__vert.attributes, entity.__frag.attributes),
         uniformSetters: _WebGL_createUniformSetters(
           gl,
           model,
           glProgram,
-          Object.assign({}, entity.b.uniforms, entity.c.uniforms)
+          Object.assign({}, entity.__vert.uniforms, entity.__frag.uniforms)
         )
       };
 
@@ -440,9 +440,9 @@ var _WebGL_drawGL = F2(function (model, domNode) {
 
     if (buffer.indexBuffer) {
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indexBuffer);
-      gl.drawElements(entity.d.a.mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
+      gl.drawElements(entity.__mesh.a.__$mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
     } else {
-      gl.drawArrays(entity.d.a.mode, 0, buffer.numIndices);
+      gl.drawArrays(entity.__mesh.a.__$mode, 0, buffer.numIndices);
     }
 
     _WebGL_listEach(__WI_disableSetting(model.__cache), entity.__settings);
