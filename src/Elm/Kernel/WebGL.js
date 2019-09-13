@@ -608,9 +608,13 @@ function _WebGL_render(model) {
   _WebGL_log('Render canvas');
   var canvas = __VirtualDom_doc.createElement('canvas');
   var gl = canvas.getContext && (
+    canvas.getContext('webgl2', options.contextAttributes) ||
     canvas.getContext('webgl', options.contextAttributes) ||
     canvas.getContext('experimental-webgl', options.contextAttributes)
   );
+
+  _WebGL_log('WebGL version: ' + gl.getParameter(gl.VERSION));
+  _WebGL_log('GLSL version: ' + gl.getParameter(gl.SHADING_LANGUAGE_VERSION));
 
   if (gl && typeof WeakMap !== 'undefined') {
     options.sceneSettings.forEach(function (sceneSetting) {
