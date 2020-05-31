@@ -65,3 +65,31 @@ var _Texture_load = F6(function (magnify, mininify, horizontalWrap, verticalWrap
 var _Texture_size = function (texture) {
   return __Utils_Tuple2(texture.__width, texture.__height);
 };
+
+
+//Texture Loading from Bytes
+
+// eslint-disable-next-line no-unused-vars
+var _Texture_loadBytes = F9(function (magnify, mininify, horizontalWrap, verticalWrap, flipY, width, height, pixelFormat, bytes) {
+  function createTexture(gl) {
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
+    gl.texImage2D(gl.TEXTURE_2D, 0, pixelFormat, width, height, 0, pixelFormat, gl.UNSIGNED_BYTE, new Uint8Array(bytes.buffer));
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magnify);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, mininify);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, horizontalWrap);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, verticalWrap);
+    if (mininify !== 9728 && mininify !== 9729) {
+      gl.generateMipmap(gl.TEXTURE_2D);
+    }
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    return texture;
+  }
+  return {
+    $: __0_TEXTURE,
+    __$createTexture: createTexture,
+    __width: width,
+    __height: height
+  };
+});
