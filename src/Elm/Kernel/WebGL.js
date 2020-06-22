@@ -384,7 +384,9 @@ var _WebGL_drawGL = F2(function (model, domNode) {
       program = {
         glProgram: glProgram,
         attributes: Object.assign({}, entity.__vert.attributes, entity.__frag.attributes),
-        currentUniforms: {}
+        currentUniforms: {},
+        activeAttributes: [],
+        activeAttributeLocations: []
       };
 
       program.uniformSetters = _WebGL_createUniformSetters(
@@ -393,6 +395,14 @@ var _WebGL_drawGL = F2(function (model, domNode) {
         program,
         Object.assign({}, entity.__vert.uniforms, entity.__frag.uniforms)
       );
+
+      var numActiveAttributes = gl.getProgramParameter(glProgram, gl.ACTIVE_ATTRIBUTES);
+      for (var i = 0; i < numActiveAttributes; i++) {
+        var attribute = gl.getActiveAttrib(glProgram, i);
+        var attribLocation = gl.getAttribLocation(glProgram, attribute.name);
+        program.activeAttributes.push(attribute);
+        program.activeAttributeLocations.push(attribLocation);
+      }
 
       progid = _WebGL_getProgID(entity.__vert.id, entity.__frag.id);
       model.__cache.programs[progid] = program;
@@ -410,23 +420,18 @@ var _WebGL_drawGL = F2(function (model, domNode) {
       model.__cache.buffers.set(entity.__mesh, buffer);
     }
 
-    var numAttributes = gl.getProgramParameter(program.glProgram, gl.ACTIVE_ATTRIBUTES);
-
-    for (var i = 0; i < numAttributes; i++) {
-      var attribute = gl.getActiveAttrib(program.glProgram, i);
-
-      var attribLocation = gl.getAttribLocation(program.glProgram, attribute.name);
-      gl.enableVertexAttribArray(attribLocation);
+    for (var i = 0; i < program.activeAttributes.length; i++) {
+      var attribute = program.activeAttributes[i];
+      var attribLocation = program.activeAttributeLocations[i];
 
       if (buffer.buffers[attribute.name] === undefined) {
         buffer.buffers[attribute.name] = _WebGL_doBindAttribute(gl, attribute, entity.__mesh, program.attributes);
       }
-      var attributeBuffer = buffer.buffers[attribute.name];
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer.buffers[attribute.name]);
+
       var attributeInfo = _WebGL_getAttributeInfo(gl, attribute.type);
-
-      gl.bindBuffer(gl.ARRAY_BUFFER, attributeBuffer);
-
       if (attributeInfo.arraySize === 1) {
+        gl.enableVertexAttribArray(attribLocation);
         gl.vertexAttribPointer(attribLocation, attributeInfo.size, attributeInfo.baseType, false, 0, 0);
       } else {
         // Point to four vec4 in case of mat4
