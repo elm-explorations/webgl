@@ -1,7 +1,6 @@
 module WebGL.Internal exposing
     ( Option(..)
     , Setting(..)
-    , disableSetting
     , enableOption
     , enableSetting
     )
@@ -53,62 +52,31 @@ type Setting
 
 
 enableSetting : () -> Setting -> ()
-enableSetting gl setting =
+enableSetting cache setting =
     case setting of
         Blend _ _ _ _ _ _ _ _ _ _ ->
-            Elm.Kernel.WebGL.enableBlend gl setting
+            Elm.Kernel.WebGL.enableBlend cache setting
 
         DepthTest _ _ _ _ ->
-            Elm.Kernel.WebGL.enableDepthTest gl setting
+            Elm.Kernel.WebGL.enableDepthTest cache setting
 
         StencilTest _ _ _ _ _ _ _ _ _ _ _ ->
-            Elm.Kernel.WebGL.enableStencilTest gl setting
+            Elm.Kernel.WebGL.enableStencilTest cache setting
 
         Scissor _ _ _ _ ->
-            Elm.Kernel.WebGL.enableScissor gl setting
+            Elm.Kernel.WebGL.enableScissor cache setting
 
         ColorMask _ _ _ _ ->
-            Elm.Kernel.WebGL.enableColorMask gl setting
+            Elm.Kernel.WebGL.enableColorMask cache setting
 
         CullFace _ ->
-            Elm.Kernel.WebGL.enableCullFace gl setting
+            Elm.Kernel.WebGL.enableCullFace cache setting
 
         PolygonOffset _ _ ->
-            Elm.Kernel.WebGL.enablePolygonOffset gl setting
+            Elm.Kernel.WebGL.enablePolygonOffset cache setting
 
         SampleCoverage _ _ ->
-            Elm.Kernel.WebGL.enableSampleCoverage gl setting
+            Elm.Kernel.WebGL.enableSampleCoverage cache setting
 
         SampleAlphaToCoverage ->
-            Elm.Kernel.WebGL.enableSampleAlphaToCoverage gl setting
-
-
-disableSetting : () -> Setting -> ()
-disableSetting cache setting =
-    case setting of
-        Blend _ _ _ _ _ _ _ _ _ _ ->
-            Elm.Kernel.WebGL.disableBlend cache
-
-        DepthTest _ _ _ _ ->
-            Elm.Kernel.WebGL.disableDepthTest cache
-
-        StencilTest _ _ _ _ _ _ _ _ _ _ _ ->
-            Elm.Kernel.WebGL.disableStencilTest cache
-
-        Scissor _ _ _ _ ->
-            Elm.Kernel.WebGL.disableScissor cache
-
-        ColorMask _ _ _ _ ->
-            Elm.Kernel.WebGL.disableColorMask cache
-
-        CullFace _ ->
-            Elm.Kernel.WebGL.disableCullFace cache
-
-        PolygonOffset _ _ ->
-            Elm.Kernel.WebGL.disablePolygonOffset cache
-
-        SampleCoverage _ _ ->
-            Elm.Kernel.WebGL.disableSampleCoverage cache
-
-        SampleAlphaToCoverage ->
-            Elm.Kernel.WebGL.disableSampleAlphaToCoverage cache
+            Elm.Kernel.WebGL.enableSampleAlphaToCoverage cache
