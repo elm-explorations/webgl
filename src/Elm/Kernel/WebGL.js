@@ -293,7 +293,8 @@ var _WebGL_disableFunctions = [_WebGL_disableBlend, _WebGL_disableDepthTest, _We
 
 function _WebGL_doCompile(gl, src, type) {
   var shader = gl.createShader(type);
-  gl.shaderSource(shader, src);
+  // Enable OES_standard_derivatives extension
+  gl.shaderSource(shader, '#extension GL_OES_standard_derivatives : enable\n' + src);
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     throw gl.getShaderInfoLog(shader);
@@ -794,6 +795,9 @@ function _WebGL_render(model) {
     options.sceneSettings.forEach(function (sceneSetting) {
       sceneSetting(gl);
     });
+
+    // Activate OES_standard_derivatives extension
+    gl.getExtension('OES_standard_derivatives');
 
     model.__cache.gl = gl;
 
