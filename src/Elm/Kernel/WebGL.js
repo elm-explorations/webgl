@@ -547,7 +547,10 @@ var _WebGL_drawGL = F2(function (model, domNode) {
       cache.programs[progid] = program;
     }
 
-    gl.useProgram(program.glProgram);
+    if (cache.lastProgId !== progid) {
+      gl.useProgram(program.glProgram);
+      cache.lastProgId = progid;
+    }
 
     _WebGL_setUniforms(program.uniformSetters, entity.__uniforms);
 
@@ -816,6 +819,7 @@ function _WebGL_render(model) {
 
     model.__cache.shaders = [];
     model.__cache.programs = {};
+    model.__cache.lastProgId = null;
     model.__cache.buffers = new WeakMap();
     model.__cache.textures = new WeakMap();
     // Memorize the initial stencil write mask, because
