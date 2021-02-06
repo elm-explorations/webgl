@@ -5,7 +5,7 @@ module Intersection exposing (main)
    visible in the intercection with the red triangle.
    A green outline marks a hidden area of the green triangle.
 
-   This example helps to understand the separate stencil test.
+   This example helps to test the separate stencil test.
 -}
 
 import Html exposing (Html)
