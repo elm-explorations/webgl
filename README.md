@@ -5,7 +5,7 @@ for rendering with WebGL. This is useful for both 2D and 3D
 rendering because it lets you take advantage of hardware acceleration with the
 GPU, meaning you can render things more quickly.
 
-[Here are some examples](https://github.com/elm-explorations/webgl/tree/master/examples) so you can get a feel for the API, but make sure you
+[Here are some examples](https://github.com/elm-explorations/webgl/tree/main/examples) so you can get a feel for the API, but make sure you
 read on to learn how WebGL and the GPU really work!
 
 [![Triangle](https://elm-explorations.github.io/webgl/examples/screenshots/triangle.jpg)](https://elm-explorations.github.io/webgl/examples/triangle.html)
@@ -59,35 +59,35 @@ be and all of the meshes loaded onto the GPU will be transformed accordingly.
 The following diagram illustrates the entire pipeline. Keep reading past the
 diagram, all the terms will be explained!
 
-![WebGL Pipeline](https://raw.githubusercontent.com/elm-explorations/webgl/master/pipeline.png)
+![WebGL Pipeline](https://raw.githubusercontent.com/elm-explorations/webgl/main/pipeline.png)
 
 We start with a mesh. It's a bunch of raw data points that we want to render on
 screen. From there, the data flows through two types of shaders:
 
- * [**Vertex Shaders**](https://en.wikipedia.org/wiki/Shader#Vertex_shaders) &mdash;
-   Our mesh is made up of lots of triangles. Each corner of a triangle is called a
-   *vertex*. The vertex shader has access to all of the attributes of each vertex,
-   like position and color, letting us move triangles around or change their color.
+- [**Vertex Shaders**](https://en.wikipedia.org/wiki/Shader#Vertex_shaders) &mdash;
+  Our mesh is made up of lots of triangles. Each corner of a triangle is called a
+  _vertex_. The vertex shader has access to all of the attributes of each vertex,
+  like position and color, letting us move triangles around or change their color.
 
- * [**Fragment Shaders**](https://en.wikipedia.org/wiki/Shader#Pixel_shaders) &mdash;
-   Also known as pixel shaders, these shaders are like filters on individual
-   pixels. They let you work with pixels to add lighting effects or add
-   postprocessing effects like blur or edge-detection.
+- [**Fragment Shaders**](https://en.wikipedia.org/wiki/Shader#Pixel_shaders) &mdash;
+  Also known as pixel shaders, these shaders are like filters on individual
+  pixels. They let you work with pixels to add lighting effects or add
+  postprocessing effects like blur or edge-detection.
 
 The flow of data between the CPU and each of our shaders is very well defined.
 To send information, there are three kinds of specialized variables:
 
- * **Uniform** &mdash; these are global read-only variables that can be used
-   in both the vertex and fragment shaders. They are defined on the CPU.
+- **Uniform** &mdash; these are global read-only variables that can be used
+  in both the vertex and fragment shaders. They are defined on the CPU.
 
- * **Attribute** &mdash; these variables represent a particular vertex in our
-   mesh. The vertex shader takes in these variables to compute some
-   transformations on each vertex.
+- **Attribute** &mdash; these variables represent a particular vertex in our
+  mesh. The vertex shader takes in these variables to compute some
+  transformations on each vertex.
 
- * **Varying** &mdash; these are variables you can write in the vertex shader
-   which then get passed along into the fragment shader, where they are
-   read-only. This lets you pass information along as you compute things in
-   your rendering pipeline.
+- **Varying** &mdash; these are variables you can write in the vertex shader
+  which then get passed along into the fragment shader, where they are
+  read-only. This lets you pass information along as you compute things in
+  your rendering pipeline.
 
 ## Making the most of the GPU
 
@@ -95,15 +95,15 @@ A typical mesh may be quite large, with hundreds or thousands of vertices, each
 with a potentially large set of attributes. Working with a mesh on the CPU is
 expensive for two major reasons:
 
-  1. The CPU is sequential, so you must work on each vertex one at a time.
-     On the GPU, you can work with tons of vertices in parallel with a Vertex
-     Shader, making things much faster.
+1. The CPU is sequential, so you must work on each vertex one at a time.
+   On the GPU, you can work with tons of vertices in parallel with a Vertex
+   Shader, making things much faster.
 
-  2. Transfering data from CPU to GPU is expensive. Ideally you want to transfer
-     all of the vertices once and make any updates to the mesh by passing in
-     uniform variables to the Vertex Shader. Not only is it cheaper to send a
-     couple matrices to the GPU, but once they get there, the GPU can use them
-     in parallel.
+2. Transfering data from CPU to GPU is expensive. Ideally you want to transfer
+   all of the vertices once and make any updates to the mesh by passing in
+   uniform variables to the Vertex Shader. Not only is it cheaper to send a
+   couple matrices to the GPU, but once they get there, the GPU can use them
+   in parallel.
 
 This library facilitates this by caching known meshes on the GPU. If you create
 a mesh and use it many times, it only gets transfered to the GPU once. Now if

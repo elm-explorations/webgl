@@ -11,7 +11,7 @@ module WebGL exposing
 
 {-| The WebGL API is for high performance rendering. Definitely read about
 [how WebGL works](https://package.elm-lang.org/packages/elm-explorations/webgl/latest)
-and look at [some examples](https://github.com/elm-explorations/webgl/tree/master/examples)
+and look at [some examples](https://github.com/elm-explorations/webgl/tree/main/examples)
 before trying to do too much with just the documentation provided here.
 
 
@@ -174,7 +174,7 @@ points =
 {-| Shaders are programs for running many computations on the GPU in parallel.
 They are written in a language called
 [GLSL](https://en.wikipedia.org/wiki/OpenGL_Shading_Language). Read more about
-shaders [here](https://github.com/elm-explorations/webgl/blob/master/README.md).
+shaders [here](https://github.com/elm-explorations/webgl/blob/main/README.md).
 
 Normally you specify a shader with a `[glsl| |]` block. Elm compiler will parse
 the shader code block and derive the type signature for your shader.
@@ -204,7 +204,7 @@ type Entity
 {-| Packages a vertex shader, a fragment shader, a mesh, and uniforms
 as an `Entity`. This specifies a full rendering pipeline to be run
 on the GPU. You can read more about the pipeline
-[here](https://github.com/elm-explorations/webgl/blob/master/README.md).
+[here](https://github.com/elm-explorations/webgl/blob/main/README.md).
 
 The vertex shader receives `attributes` and `uniforms` and returns `varyings`
 and `gl_Position`—the position of the vertex on the screen, defined as

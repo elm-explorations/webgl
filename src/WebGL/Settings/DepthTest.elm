@@ -1,16 +1,8 @@
-module WebGL.Settings.DepthTest
-    exposing
-        ( Options
-        , always
-        , default
-        , equal
-        , greater
-        , greaterOrEqual
-        , less
-        , lessOrEqual
-        , never
-        , notEqual
-        )
+module WebGL.Settings.DepthTest exposing
+    ( default
+    , Options, less, never, always, equal, greater, notEqual
+    , lessOrEqual, greaterOrEqual
+    )
 
 {-| You can read more about depth-testing in the
 [OpenGL wiki](https://www.khronos.org/opengl/wiki/Depth_Test)
@@ -37,7 +29,7 @@ import WebGL.Settings exposing (Setting)
 
 Imagine you have many entities in the same line of sight. The floor,
 then a table, then a plate. When depth-testing is off, you go through
-the entities in the order they appear in your *code*! That means if
+the entities in the order they appear in your _code_! That means if
 you describe the floor last, it will be “on top” of the table and plate.
 
 Depth-testing means the color is chosen based on the distance from the
@@ -68,22 +60,29 @@ you draw the color of the “winner”.
 
 Which color wins? This is based on a bunch of comparison functions:
 
-    less options           -- value < depth
-    never options          -- Never pass
-    always options         -- Always pass
-    equal options          -- value == depth
-    greater options        -- value > depth
-    notEqual options       -- value != depth
-    lessOrEqual options    -- value <= depth
+    less options -- value < depth
+
+    never options -- Never pass
+
+    always options -- Always pass
+
+    equal options -- value == depth
+
+    greater options -- value > depth
+
+    notEqual options -- value != depth
+
+    lessOrEqual options -- value <= depth
+
     greaterOrEqual options -- value >= depth
 
 If the test passes, the current value will be written into the depth buffer, so
 the next pixels will be tested against it. Sometimes you may want to disable
 writing. For example, when using depth test together with stencil test to create
 [reflection effect](https://open.gl/depthstencils) you want to draw the
-reflection *underneath* the floor, in this case you set `write = False`
+reflection _underneath_ the floor, in this case you set `write = False`
 when drawing the floor. The
-[crate example](https://github.com/elm-explorations/webgl/blob/master/examples/crate.elm)
+[crate example](https://github.com/elm-explorations/webgl/blob/main/examples/crate.elm)
 shows how to do it in Elm.
 
 `near` and `far` allow to allocate a portion of the depth range from 0 to 1.

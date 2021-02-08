@@ -1,26 +1,11 @@
-module WebGL.Settings.StencilTest
-    exposing
-        ( Operation
-        , Test
-        , always
-        , decrement
-        , decrementWrap
-        , equal
-        , greater
-        , greaterOrEqual
-        , increment
-        , incrementWrap
-        , invert
-        , keep
-        , less
-        , lessOrEqual
-        , never
-        , notEqual
-        , replace
-        , test
-        , testSeparate
-        , zero
-        )
+module WebGL.Settings.StencilTest exposing
+    ( test
+    , Test, always, equal, never, less, greater, notEqual
+    , lessOrEqual, greaterOrEqual
+    , Operation, replace, keep, zero, increment, decrement, invert
+    , incrementWrap, decrementWrap
+    , testSeparate
+    )
 
 {-| You can read more about stencil-testing in the
 [OpenGL wiki](https://www.khronos.org/opengl/wiki/Stencil_Test)
@@ -75,10 +60,10 @@ with all 1's:
     test
         { ref = 1
         , mask = 0xFF
-        , test = always    -- pass for each pixel
-        , fail = keep      -- noop
-        , zfail = keep     -- noop
-        , zpass = replace  -- write ref to the stencil buffer
+        , test = always -- pass for each pixel
+        , fail = keep -- noop
+        , zfail = keep -- noop
+        , zpass = replace -- write ref to the stencil buffer
         , writeMask = 0xFF -- enable all stencil bits for writing
         }
 
@@ -87,15 +72,15 @@ Crop the reflection `Entity` using the values from the stencil buffer:
     test
         { ref = 1
         , mask = 0xFF
-        , test = equal  -- pass when the stencil value is equal to ref = 1
-        , fail = keep   -- noop
-        , zfail = keep  -- noop
-        , zpass = keep  -- noop
+        , test = equal -- pass when the stencil value is equal to ref = 1
+        , fail = keep -- noop
+        , zfail = keep -- noop
+        , zpass = keep -- noop
         , writeMask = 0 -- disable writing to the stencil buffer
         }
 
 You can see the complete example
-[here](https://github.com/elm-explorations/webgl/blob/master/examples/crate.elm).
+[here](https://github.com/elm-explorations/webgl/blob/main/examples/Crate.elm).
 
 -}
 test :
@@ -119,13 +104,20 @@ test stencilTest =
 with the stencil buffer value, in order to set the conditions under which
 the pixel will be drawn.
 
-    always         -- Always pass
-    equal          -- ref & mask == stencil & mask
-    never          -- Never pass
-    less           -- ref & mask < stencil & mask
-    greater        -- ref & mask > stencil & mask
-    notEqual       -- ref & mask != stencil & mask
-    lessOrEqual    -- ref & mask <= stencil & mask
+    always -- Always pass
+
+    equal -- ref & mask == stencil & mask
+
+    never -- Never pass
+
+    less -- ref & mask < stencil & mask
+
+    greater -- ref & mask > stencil & mask
+
+    notEqual -- ref & mask != stencil & mask
+
+    lessOrEqual -- ref & mask <= stencil & mask
+
     greaterOrEqual -- ref & mask >= stencil & mask
 
 -}
@@ -268,6 +260,6 @@ testSeparate { ref, mask, writeMask } options1 options2 =
                 >> expandOp options.zfail
                 >> expandOp options.zpass
     in
-        I.StencilTest ref mask writeMask
-            |> expand options1
-            |> expand options2
+    I.StencilTest ref mask writeMask
+        |> expand options1
+        |> expand options2
