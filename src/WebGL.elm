@@ -51,7 +51,7 @@ before trying to do too much with just the documentation provided here.
 import Elm.Kernel.WebGL
 import Html exposing (Attribute, Html)
 import WebGL.Internal as I
-import WebGL.Settings as Settings exposing (Setting)
+import WebGL.Settings exposing (Setting)
 import WebGL.Settings.DepthTest as DepthTest
 
 
